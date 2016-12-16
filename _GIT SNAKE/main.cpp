@@ -1,5 +1,6 @@
 #include <iostream>
 #include <windows.h>
+#include <conio.h>
 
 using namespace std;
 
@@ -62,6 +63,25 @@ void Draw()
 
 void Input()
 {
+    if (_kbhit())
+    {
+        switch (_getch())
+        {
+        case 'w':
+            dir = UP;
+            break;
+        case 'a':
+            dir = LEFT;
+            break;
+        case 's':
+            dir = DOWN;
+            break;
+        case 'd':
+            dir = RIGHT;
+            break;
+        }
+
+    }
 
 }
 
