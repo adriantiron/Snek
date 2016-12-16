@@ -19,6 +19,15 @@ void ClearScreen(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),p);
 }
 
+void ShowConsoleCursor()
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out,&cursorInfo);
+    cursorInfo.bVisible = 0;
+    SetConsoleCursorInfo(out,&cursorInfo);
+}
+
 void Setup()
 {
     gameOver = false;
@@ -33,7 +42,7 @@ void Setup()
 
 void Draw()
 {
-    ClearScreen( 0, 0 );  // system("cls");
+    ClearScreen( 0, 0 );   // system("cls");
 
     for (int i=0; i<width; i++)
         cout<<"#";
@@ -44,7 +53,7 @@ void Draw()
         for (int j=0; j<width; j++)
         {
 
-            if (j == 0 || j == width - 1)
+            if (j == 0)
                 cout<<"#";
             else
             {
@@ -55,8 +64,10 @@ void Draw()
                 else
                     cout<<" ";
 
-
             }
+
+            if (j == width - 1)
+                cout<<"#";
         }
 
         cout<<"\n";
@@ -114,11 +125,12 @@ void Logic()
     case RIGHT:
         headX++;
         break;
+
     default:
         break;
     }
 
-    if ( headX > width || headX < 0 || headY > height || headY < 0)
+    if ( headX >= width || headX <= 0 || headY >= height || headY < 0)
         gameOver = true;
 
     if (headX == fruitX && headY == fruitY)
@@ -133,6 +145,7 @@ void Logic()
 
 int main()
 {
+    ShowConsoleCursor();
     Setup();
 
     while (!gameOver)
