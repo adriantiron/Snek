@@ -12,6 +12,12 @@ enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 
 
+void ClearScreen(int x, int y)
+{
+    COORD p = {x,y};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),p);
+}
+
 void Setup()
 {
     gameOver = false;
@@ -25,7 +31,7 @@ void Setup()
 
 void Draw()
 {
-    system("cls");
+    ClearScreen( 0, 0 );  // system("cls");
 
     for (int i=0; i<width; i++)
         cout<<"#";
@@ -59,6 +65,8 @@ void Draw()
     for (int i=0; i<width; i++)
         cout<<"#";
 
+    cout<<"\n";
+    cout<<"SCORE: "<<score;
 }
 
 void Input()
@@ -104,7 +112,8 @@ void Logic()
     case RIGHT:
         headX++;
         break;
-
+    default:
+        break;
     }
 
 
@@ -121,7 +130,6 @@ int main()
         Logic();
         Sleep(30);
     }
-
 
     return 0;
 }
