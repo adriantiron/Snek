@@ -1,6 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <time.h>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ void Setup()
     dir = STOP;
     headX = width / 2;
     headY = height/ 2;
+    srand(time(NULL));
     fruitX = rand() % width;
     fruitY = rand() % height;
     score = 0;
