@@ -87,6 +87,26 @@ void Input()
 
 void Logic()
 {
+    switch (dir)
+    {
+    case UP:
+        headY--;
+        break;
+
+    case LEFT:
+        headX--;
+        break;
+
+    case DOWN:
+        headY++;
+        break;
+
+    case RIGHT:
+        headX++;
+        break;
+
+    }
+
 
 }
 
