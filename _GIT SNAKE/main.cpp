@@ -6,8 +6,8 @@
 using namespace std;
 
 bool gameOver;
-const int height = 25;
-const int width = 75;
+const int height = 20;
+const int width = 50;
 int headX, headY, fruitX, fruitY, score;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
@@ -118,6 +118,16 @@ void Logic()
         break;
     }
 
+    if ( headX > width || headX < 0 || headY > height || headY < 0)
+        gameOver = true;
+
+    if (headX == fruitX && headY == fruitY)
+    {
+        score += 10;
+        fruitX = rand() % width;
+        fruitY = rand() % height;
+
+    }
 
 }
 
@@ -130,7 +140,7 @@ int main()
         Draw();
         Input();
         Logic();
-        Sleep(30);
+        Sleep(40);
     }
 
     return 0;
