@@ -4,8 +4,8 @@
 using namespace std;
 
 bool gameOver;
-const int height = 20;
-const int width = 40;
+const int height = 25;
+const int width = 75;
 int headX, headY, fruitX, fruitY, score;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
@@ -38,8 +38,16 @@ void Draw()
             if (j == 0 || j == width - 1)
                 cout<<"#";
             else
-                cout<<" ";
+            {
+                if (i == headY && j == headX)
+                    cout<<"O";
+                else if (i == fruitY && j == fruitX)
+                    cout<<"*";
+                else
+                    cout<<" ";
 
+
+            }
         }
 
         cout<<"\n";
@@ -71,6 +79,7 @@ int main()
         Draw();
         Input();
         Logic();
+        Sleep(30);
     }
 
 
