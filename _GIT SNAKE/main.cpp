@@ -67,7 +67,7 @@ void ShowConsoleCursor()
 
 void Setup()
 {
-    SetWindow(43,24);
+    SetWindow(42,24);
     gameOver = false;
     dir = STOP;
     headX = width / 2;
@@ -86,7 +86,6 @@ void Draw()
     char wallChar = 219;
     char snekHead = 232;
     char fruitChar = 42;
-    char tailChar = 248;
 
     ClearScreen( 0, 0 );   // system("cls");
 
@@ -114,7 +113,8 @@ void Draw()
                 {
                     if (tailX[k] == j && tailY[k] == i)
                     {
-                        cout<<tailChar;
+                        if(i!=1 || j!=1)
+                            cout<<"o";
                         tailDisplayed = true;
                     }
                 }
@@ -146,18 +146,32 @@ void Input()
     {
         switch (_getch())
         {
+
         case 'w':
-            dir = UP;
+        {
+            if (dir != DOWN)
+                dir = UP;
             break;
+        }
         case 'a':
-            dir = LEFT;
+        {
+            if (dir != RIGHT)
+                dir = LEFT;
             break;
+        }
         case 's':
-            dir = DOWN;
+        {
+            if (dir != UP)
+                dir = DOWN;
             break;
+        }
         case 'd':
-            dir = RIGHT;
+        {
+            if (dir != LEFT)
+                dir = RIGHT;
             break;
+        }
+
         }
 
     }
@@ -188,26 +202,32 @@ void Logic()
     switch (dir)
     {
     case UP:
+    {
+        Sleep(46);
         headY--;
         break;
-
+    }
     case LEFT:
+    {
         headX--;
         break;
-
+    }
     case DOWN:
+    {
+        Sleep(46);
         headY++;
         break;
-
+    }
     case RIGHT:
+    {
         headX++;
         break;
-
+    }
     default:
         break;
     }
 
-    if ( headX >= width || headX <= 0 || headY >= height || headY < 0)
+    if ( headX >= width || headX < 0 || headY >= height || headY < 0)
         gameOver = true;
 
     for (int i=0; i<nTail; i++)
