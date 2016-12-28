@@ -36,8 +36,11 @@ void Setup()
     headX = width / 2;
     headY = height/ 2;
     srand(time(NULL));
-    fruitX = rand() % width;
-    fruitY = rand() % height;
+    while (fruitX != headX && fruitY != headY)
+    {
+        fruitX = rand() % width;
+        fruitY = rand() % height;
+    }
     score = 0;
 }
 
