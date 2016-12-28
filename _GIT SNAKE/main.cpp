@@ -7,12 +7,48 @@ using namespace std;
 
 bool gameOver;
 const int height = 20;
-const int width = 50;
+const int width = 40;
 int headX, headY, fruitX, fruitY, score;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
 
+
+void SetWindow(int Width, int Height)
+{
+    _COORD coord;
+    coord.X = Width;
+    coord.Y = Height;
+
+    _SMALL_RECT Rect;
+    Rect.Top = 0;
+    Rect.Left = 0;
+    Rect.Bottom = Height - 1;
+    Rect.Right = Width - 1;
+
+    // Get handle of the standard output
+    HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (Handle == NULL)
+    {
+        cout<<endl;
+
+    }
+
+    // Set screen buffer size to that specified in coord
+    if(!SetConsoleScreenBufferSize(Handle, coord))
+    {
+        cout<<endl;
+
+    }
+
+    // Set the window size to that specified in Rect
+    if(!SetConsoleWindowInfo(Handle, TRUE, &Rect))
+    {
+        cout<<endl;
+
+    }
+
+}
 
 void ClearScreen(int x, int y)
 {
@@ -31,6 +67,7 @@ void ShowConsoleCursor()
 
 void Setup()
 {
+    SetWindow(43,24);
     gameOver = false;
     dir = STOP;
     headX = width / 2;
