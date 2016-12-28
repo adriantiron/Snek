@@ -91,7 +91,7 @@ void Draw()
 
     for (int i=0; i<width+2; i++)
         cout<<wallChar;
-    cout<<"\n";
+    cout<<endl;
 
     for (int i=0; i<height; i++)
     {
@@ -113,8 +113,7 @@ void Draw()
                 {
                     if (tailX[k] == j && tailY[k] == i)
                     {
-                        if(i!=1 || j!=1)
-                            cout<<"o";
+                        cout<<"o";
                         tailDisplayed = true;
                     }
                 }
@@ -122,8 +121,6 @@ void Draw()
                     cout<<" ";
 
             }
-
-
 
             if (j == width - 1)
                 cout<<wallChar;
@@ -173,9 +170,7 @@ void Input()
         }
 
         }
-
     }
-
 }
 
 void Logic()
@@ -241,8 +236,6 @@ void Logic()
         fruitY = rand() % height;
         nTail++;
     }
-
-
 
 }
 
