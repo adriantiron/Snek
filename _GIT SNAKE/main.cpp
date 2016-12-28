@@ -11,6 +11,7 @@ const int width = 50;
 int headX, headY, fruitX, fruitY, score;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
+int nTail, tailX[100], tailY[100];
 
 
 void ClearScreen(int x, int y)
@@ -44,7 +45,7 @@ void Draw()
 {
     ClearScreen( 0, 0 );   // system("cls");
 
-    for (int i=0; i<width; i++)
+    for (int i=0; i<width+1; i++)
         cout<<"#";
     cout<<"\n";
 
@@ -62,7 +63,21 @@ void Draw()
                 else if (i == fruitY && j == fruitX)
                     cout<<"*";
                 else
-                    cout<<" ";
+                {
+                    bool tailDisplayed = false;
+
+                    for (int k=0; k<nTail; k++)
+                    {
+                        if (tailX[k] == j && tailY[k] == i)
+                        {
+                            cout<<"o";
+                            tailDisplayed = true;
+                        }
+                    }
+                   if (!tailDisplayed)
+                        cout<<" ";
+
+                }
 
             }
 
@@ -75,7 +90,7 @@ void Draw()
     }
 
 
-    for (int i=0; i<width; i++)
+    for (int i=0; i<width+1; i++)
         cout<<"#";
 
     cout<<"\n";
@@ -108,6 +123,25 @@ void Input()
 
 void Logic()
 {
+    int prevX = tailX[0];
+    int prevY = tailY[0];
+    int prev2X, prev2Y;
+
+    tailX[0] = headX;
+    tailY[0] = headY;
+
+    for (int i=1; i< nTail; i++)
+    {
+        prev2X = tailX[1];
+        prev2Y = tailY[1];
+
+        tailX[i] = prevX;
+        tailY[i] = prevY;
+
+        prevX = prev2X;
+        prevY = prev2Y;
+    }
+
     switch (dir)
     {
     case UP:
@@ -133,13 +167,19 @@ void Logic()
     if ( headX >= width || headX <= 0 || headY >= height || headY < 0)
         gameOver = true;
 
+    for (int i=0; i<nTail; i++)
+        if (tailX[i] == headX && tailY[i] == headY)
+                gameOver = true;
+
     if (headX == fruitX && headY == fruitY)
     {
         score += 10;
         fruitX = rand() % width;
         fruitY = rand() % height;
-
+        nTail++;
     }
+
+
 
 }
 
