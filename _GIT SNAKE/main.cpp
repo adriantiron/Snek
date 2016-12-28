@@ -45,7 +45,7 @@ void Draw()
 {
     ClearScreen( 0, 0 );   // system("cls");
 
-    for (int i=0; i<width+1; i++)
+    for (int i=0; i<width+2; i++)
         cout<<"#";
     cout<<"\n";
 
@@ -56,44 +56,42 @@ void Draw()
 
             if (j == 0)
                 cout<<"#";
+
+            if (i == headY && j == headX)
+                cout<<"O";
+            else if (i == fruitY && j == fruitX)
+                cout<<"*";
             else
             {
-                if (i == headY && j == headX)
-                    cout<<"O";
-                else if (i == fruitY && j == fruitX)
-                    cout<<"*";
-                else
+                bool tailDisplayed = false;
+
+                for (int k = 0; k < nTail; k++)
                 {
-                    bool tailDisplayed = false;
-
-                    for (int k=0; k<nTail; k++)
+                    if (tailX[k] == j && tailY[k] == i)
                     {
-                        if (tailX[k] == j && tailY[k] == i)
-                        {
-                            cout<<"o";
-                            tailDisplayed = true;
-                        }
+                        cout<<"o";
+                        tailDisplayed = true;
                     }
-                   if (!tailDisplayed)
-                        cout<<" ";
-
                 }
+                if (!tailDisplayed)
+                    cout<<" ";
 
             }
+
+
 
             if (j == width - 1)
                 cout<<"#";
         }
 
-        cout<<"\n";
-
+        cout<<endl;
     }
 
 
-    for (int i=0; i<width+1; i++)
+    for (int i=0; i<width+2; i++)
         cout<<"#";
 
-    cout<<"\n";
+    cout<<endl;
     cout<<"SCORE: "<<score;
 }
 
@@ -132,8 +130,8 @@ void Logic()
 
     for (int i=1; i< nTail; i++)
     {
-        prev2X = tailX[1];
-        prev2Y = tailY[1];
+        prev2X = tailX[i];
+        prev2Y = tailY[i];
 
         tailX[i] = prevX;
         tailY[i] = prevY;
@@ -169,7 +167,7 @@ void Logic()
 
     for (int i=0; i<nTail; i++)
         if (tailX[i] == headX && tailY[i] == headY)
-                gameOver = true;
+            gameOver = true;
 
     if (headX == fruitX && headY == fruitY)
     {
@@ -193,7 +191,7 @@ int main()
         Draw();
         Input();
         Logic();
-        Sleep(40);
+        Sleep(55);
     }
 
     return 0;
