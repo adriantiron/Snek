@@ -83,10 +83,15 @@ void Setup()
 
 void Draw()
 {
+    char wallChar = 219;
+    char snekHead = 232;
+    char fruitChar = 42;
+    char tailChar = 248;
+
     ClearScreen( 0, 0 );   // system("cls");
 
     for (int i=0; i<width+2; i++)
-        cout<<"#";
+        cout<<wallChar;
     cout<<"\n";
 
     for (int i=0; i<height; i++)
@@ -95,12 +100,12 @@ void Draw()
         {
 
             if (j == 0)
-                cout<<"#";
+                cout<<wallChar;
 
             if (i == headY && j == headX)
-                cout<<"O";
+                cout<<snekHead;
             else if (i == fruitY && j == fruitX)
-                cout<<"*";
+                cout<<fruitChar;
             else
             {
                 bool tailDisplayed = false;
@@ -109,7 +114,7 @@ void Draw()
                 {
                     if (tailX[k] == j && tailY[k] == i)
                     {
-                        cout<<"o";
+                        cout<<tailChar;
                         tailDisplayed = true;
                     }
                 }
@@ -121,7 +126,7 @@ void Draw()
 
 
             if (j == width - 1)
-                cout<<"#";
+                cout<<wallChar;
         }
 
         cout<<endl;
@@ -129,10 +134,10 @@ void Draw()
 
 
     for (int i=0; i<width+2; i++)
-        cout<<"#";
+        cout<<wallChar;
 
     cout<<endl;
-    cout<<"SCORE: "<<score;
+    cout << "                Score:" << score << endl;
 }
 
 void Input()
@@ -234,5 +239,7 @@ int main()
         Sleep(55);
     }
 
+    cout<<endl<<"         Better luck next time!"<<endl;
+    Sleep(1000);
     return 0;
 }
