@@ -234,6 +234,21 @@ void Logic()
         score += 10;
         fruitX = rand() % width;
         fruitY = rand() % height;
+
+        bool fruitIsOnTail = true;
+
+        while (fruitIsOnTail)
+        {
+            fruitIsOnTail = false;
+            for (int i=0; i<nTail; i++)
+                if (tailX[i] == fruitX && tailY[i] == fruitY)
+                {
+                    fruitX = rand() % width;
+                    fruitY = rand() % height;
+                    fruitIsOnTail = true;
+                }
+        }
+
         nTail++;
     }
 
