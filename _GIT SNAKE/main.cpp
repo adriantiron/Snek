@@ -8,7 +8,7 @@
 using namespace std;
 
 bool gameOver;
-const int height = 20;
+const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
@@ -69,7 +69,7 @@ void ShowConsoleCursor()
 
 void Setup()
 {
-    SetWindow(42,24);
+    SetWindow(50,50);
     gameOver = false;
     dir = STOP;
     headX = width / 2;
@@ -91,8 +91,11 @@ void Draw()
 
     ClearScreen( 0, 0 );   // system("cls");
 
-    for (int i=0; i<width+2; i++)
-        cout<<wallChar;
+    for (int i=0; i<width; i++)
+        {
+            cout<<wallChar;
+            bar(i*10 , 0 , i*10+10 , 10);
+        }
     cout<<endl;
 
     for (int i=0; i<height; i++)
@@ -101,7 +104,10 @@ void Draw()
         {
 
             if (j == 0)
-                cout<<wallChar;
+                {
+                    cout<<wallChar;
+                    bar(0 , i*10 , 10 , i*10+10);
+                }
 
             if (i == headY && j == headX)
                 cout<<snekHead;
@@ -125,15 +131,21 @@ void Draw()
             }
 
             if (j == width - 1)
-                cout<<wallChar;
+               {
+                   cout<<wallChar;
+                   bar(j*10 , i*10 , j*10+10 , i*10+10);
+               }
         }
 
         cout<<endl;
     }
 
 
-    for (int i=0; i<width+2; i++)
-        cout<<wallChar;
+    for (int i=0; i<width; i++)
+        {
+            cout<<wallChar;
+            bar(i*10,height*10,i*10+10,height*10+10);
+        }
 
     cout<<endl;
     cout << "                Score:" << score << endl;
@@ -256,21 +268,29 @@ void Logic()
 
 void game_window()
 {
-    initwindow(400 , 400 , "SNEK");
+    initwindow(1000 , 600 , "SNEK");
+}
+
+void game_score()
+{
+    char arr[50];
+    sprintf(arr , "SCORE: %d " , score);
+    setcolor(LIGHTCYAN);
+    outtextxy(500 , 300 , arr);
 }
 
 int main()
 {
-    game_window();
-    system("color A");
+    system("color 3");
     ShowConsoleCursor();
     Setup();
-
+    game_window();
     while (!gameOver)
     {
         Draw();
         Input();
         Logic();
+        game_score();
         Sleep(55);
     }
 
