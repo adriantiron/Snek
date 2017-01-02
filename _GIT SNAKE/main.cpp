@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <conio.h>
 #include <time.h>
+#include <graphics.h>
+#include <stdio.h>
 
 using namespace std;
 
@@ -83,9 +85,9 @@ void Setup()
 
 void Draw()
 {
-    char wallChar = 219;
-    char snekHead = 232;
-    char fruitChar = 42;
+    char wallChar = 'w';
+    char snekHead = 'h';
+    char fruitChar = 'f';
 
     ClearScreen( 0, 0 );   // system("cls");
 
@@ -113,7 +115,7 @@ void Draw()
                 {
                     if (tailX[k] == j && tailY[k] == i)
                     {
-                        cout<<"o";
+                        cout<<"b";
                         tailDisplayed = true;
                     }
                 }
@@ -234,7 +236,6 @@ void Logic()
         score += 10;
         fruitX = rand() % width;
         fruitY = rand() % height;
-
         bool fruitIsOnTail = true;
 
         while (fruitIsOnTail)
@@ -248,14 +249,20 @@ void Logic()
                     fruitIsOnTail = true;
                 }
         }
-
         nTail++;
     }
 
 }
 
+void game_window()
+{
+    initwindow(400 , 400 , "SNEK");
+}
+
 int main()
 {
+    game_window();
+    system("color A");
     ShowConsoleCursor();
     Setup();
 
@@ -271,3 +278,4 @@ int main()
     Sleep(1000);
     return 0;
 }
+
