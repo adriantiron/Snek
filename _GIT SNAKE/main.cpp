@@ -278,7 +278,7 @@ void game_score()
     outtextxy(500 , 150 , arr);
 }
 
-int main()
+void singleplayer()
 {
     system("color 3");
     ShowConsoleCursor();
@@ -290,10 +290,16 @@ int main()
         Input();
         Logic();
         game_score();
-        Sleep(55);
+
     }
 
     cout<<endl<<"         Better luck next time!"<<endl;
     Sleep(1000);
+}
+
+int main()
+{
+    singleplayer();
     return 0;
+
 }
