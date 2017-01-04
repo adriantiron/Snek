@@ -10,7 +10,7 @@ using namespace std;
 bool gameOver;
 const int height = 40;
 const int width = 40;
-int headX, headY, fruitX, fruitY, score;
+int headX, headY, fruitX, fruitY, score , uspeedX , uspeedY , boostX , boostY , dspeedX , dspeedY , lhalfX , lhalfY ;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
@@ -92,8 +92,6 @@ void Draw()
     ClearScreen( 0, 0 );   // system("cls");
     setfillstyle(SOLID_FILL , BLACK);
     bar(0,0,10,10);
-    setfillstyle(SOLID_FILL , LIGHTGRAY);
-    bar(30,30,410,410);
     setfillstyle(SOLID_FILL , LIGHTGREEN);
     bar(20 , 20 , 420 , 30);
     bar(20 , 30 , 30 , 420);
@@ -104,12 +102,14 @@ void Draw()
         for (int j=1; j<=width; j++)
         {
             if (i == headY && j == headX)
+            {
+                setfillstyle(SOLID_FILL , LIGHTGREEN);
                 bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
+            }
             else if (i == fruitY && j == fruitX)
             {
                 setfillstyle(SOLID_FILL , RED);
                 bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
-                setfillstyle(SOLID_FILL , LIGHTGREEN);
                 cout<<fruitChar;
             }
 
@@ -120,13 +120,18 @@ void Draw()
                 {
                     if (tailX[k] == j && tailY[k] == i)
                     {
-                         bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
+                        setfillstyle(SOLID_FILL , LIGHTGREEN);
+                        bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
                         cout<<"b";
                         tailDisplayed = true;
                     }
                 }
-                if (!tailDisplayed)
-                    cout<<" ";
+                if (!tailDisplayed && j<=width-2 && i<=height-2)
+                    {
+                        setfillstyle(SOLID_FILL , LIGHTGRAY);
+                        bar((i+2)*10 , (j+2)*10 , (i+2)*10+10, (j+2)*10+10);
+                        cout<<" ";
+                    }
 
             }
 
