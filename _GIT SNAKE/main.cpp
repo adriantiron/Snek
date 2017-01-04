@@ -21,6 +21,74 @@ void multiplayer();
 void help();
 void highscores();
 
+//Sprites:
+void headSprite(int x , int y)
+{
+      int i , j , a[10][10]={
+      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
+      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
+      1 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 1 ,
+      1 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 1 ,
+      1 , 2 , 1 , 2 , 2 , 2 , 2 , 1 , 2 , 1 ,
+      1 , 2 , 1 , 2 , 2 , 2 , 2 , 1 , 2 , 1 ,
+      1 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 1 ,
+      1 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 1 ,
+      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
+      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
+      };
+      for(i=0;i<10;i++)
+        for(j=0;j<10;j++)
+        if(a[i][j]==1)
+      {
+          setfillstyle(SOLID_FILL , LIGHTGREEN);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==2)
+      {
+          setfillstyle(SOLID_FILL , WHITE);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==0)
+      {
+          setfillstyle(SOLID_FILL , LIGHTGRAY);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+}
+
+void bodySprite(int x , int y)
+{
+     int i , j , a[10][10]={
+      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
+      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
+      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
+      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+      };
+      for(i=0;i<10;i++)
+        for(j=0;j<10;j++)
+        if(a[i][j]==1)
+      {
+          setfillstyle(SOLID_FILL , LIGHTGREEN);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==2)
+      {
+          setfillstyle(SOLID_FILL , WHITE);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==0)
+      {
+          setfillstyle(SOLID_FILL , LIGHTGRAY);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+}
+
+
 
 void SetWindow(int Width, int Height)
 {
@@ -109,8 +177,9 @@ void Draw()
         {
             if (i == headY && j == headX)
             {
-                setfillstyle(SOLID_FILL , LIGHTGREEN);
-                bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
+                headSprite((i+2)*10,(j+2)*10);
+               // setfillstyle(SOLID_FILL , LIGHTGREEN);
+                //bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
             }
             else if (i == fruitY && j == fruitX)
             {
@@ -126,8 +195,9 @@ void Draw()
                 {
                     if (tailX[k] == j && tailY[k] == i)
                     {
-                        setfillstyle(SOLID_FILL , LIGHTGREEN);
-                        bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
+                        bodySprite((i+2)*10,(j+2)*10);
+                       // setfillstyle(SOLID_FILL , LIGHTGREEN);
+                       // bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
                         cout<<"b";
                         tailDisplayed = true;
                     }
@@ -270,6 +340,18 @@ void Logic()
                     fruitX = rand() % (width-4) + 3;
                     fruitY = rand() % (height-4) + 3;
                     fruitIsOnTail = true;
+                }
+        }
+        bool fruitIsOnHead = true;
+
+        while (fruitIsOnHead)
+        {
+            fruitIsOnHead = false;
+                if (headX == fruitX && headY == fruitY)
+                {
+                    fruitX = rand() % (width-4) + 3;
+                    fruitY = rand() % (height-4) + 3;
+                    fruitIsOnHead = true;
                 }
         }
         nTail++;
