@@ -90,37 +90,37 @@ void Draw()
     char fruitChar = 'f';
 
     ClearScreen( 0, 0 );   // system("cls");
-
-    for (int i=0; i<width; i++)
-        {
-            cout<<wallChar;
-            bar(i*10 , 0 , i*10+10 , 10);
-        }
-    cout<<endl;
-
-    for (int i=0; i<height; i++)
+    setfillstyle(SOLID_FILL , BLACK);
+    bar(0,0,10,10);
+    setfillstyle(SOLID_FILL , LIGHTGRAY);
+    bar(30,30,410,410);
+    setfillstyle(SOLID_FILL , LIGHTGREEN);
+    bar(20 , 20 , 420 , 30);
+    bar(20 , 30 , 30 , 420);
+    bar(30 , 410 , 410 , 420);
+    bar(410 , 30 , 420 , 420);
+    for (int i=1; i<=height; i++)
     {
-        for (int j=0; j<width; j++)
+        for (int j=1; j<=width; j++)
         {
-
-            if (j == 0)
-                {
-                    cout<<wallChar;
-                    bar(0 , i*10 , 10 , i*10+10);
-                }
-
             if (i == headY && j == headX)
-                cout<<snekHead;
+                bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
             else if (i == fruitY && j == fruitX)
+            {
+                setfillstyle(SOLID_FILL , RED);
+                bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
+                setfillstyle(SOLID_FILL , LIGHTGREEN);
                 cout<<fruitChar;
+            }
+
             else
             {
                 bool tailDisplayed = false;
-
                 for (int k = 0; k < nTail; k++)
                 {
                     if (tailX[k] == j && tailY[k] == i)
                     {
+                         bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
                         cout<<"b";
                         tailDisplayed = true;
                     }
@@ -130,11 +130,8 @@ void Draw()
 
             }
 
-            if (j == width - 1)
-               {
+            if (j == width)
                    cout<<wallChar;
-                   bar(j*10 , i*10 , j*10+10 , i*10+10);
-               }
         }
 
         cout<<endl;
@@ -142,13 +139,12 @@ void Draw()
 
 
     for (int i=0; i<width; i++)
-        {
             cout<<wallChar;
-            bar(i*10,height*10,i*10+10,height*10+10);
-        }
+
 
     cout<<endl;
     cout << "                Score:" << score << endl;
+
 }
 
 void Input()
@@ -158,25 +154,25 @@ void Input()
         switch (_getch())
         {
 
-        case 'w':
+        case 'a':
         {
             if (dir != DOWN)
                 dir = UP;
             break;
         }
-        case 'a':
+        case 'w':
         {
             if (dir != RIGHT)
                 dir = LEFT;
             break;
         }
-        case 's':
+        case 'd':
         {
             if (dir != UP)
                 dir = DOWN;
             break;
         }
-        case 'd':
+        case 's':
         {
             if (dir != LEFT)
                 dir = RIGHT;
@@ -212,7 +208,6 @@ void Logic()
     {
     case UP:
     {
-        Sleep(46);
         headY--;
         break;
     }
@@ -223,7 +218,6 @@ void Logic()
     }
     case DOWN:
     {
-        Sleep(46);
         headY++;
         break;
     }
@@ -236,7 +230,7 @@ void Logic()
         break;
     }
 
-    if ( headX >= width || headX < 0 || headY >= height || headY < 0)
+    if ( headX >= width-1 || headX < 1 || headY >= height-1 || headY < 1)
         gameOver = true;
 
     for (int i=0; i<nTail; i++)
@@ -256,8 +250,8 @@ void Logic()
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == fruitX && tailY[i] == fruitY)
                 {
-                    fruitX = rand() % width;
-                    fruitY = rand() % height;
+                    fruitX = rand() % (width - 1);
+                    fruitY = rand() % (height - 1);
                     fruitIsOnTail = true;
                 }
         }
@@ -268,7 +262,7 @@ void Logic()
 
 void game_window()
 {
-    initwindow(1000 , 600 , "SNEK");
+    initwindow(630 , 460 , "SNEK");
 }
 
 void game_score()
@@ -276,7 +270,7 @@ void game_score()
     char arr[50];
     sprintf(arr , "SCORE: %d " , score);
     setcolor(LIGHTCYAN);
-    outtextxy(500 , 300 , arr);
+    outtextxy(500 , 150 , arr);
 }
 
 int main()
@@ -298,4 +292,3 @@ int main()
     Sleep(1000);
     return 0;
 }
-
