@@ -15,6 +15,12 @@ enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
 
+//Prototypes:
+void menu();
+void multiplayer();
+void help();
+void highscores();
+
 
 void SetWindow(int Width, int Height)
 {
@@ -183,6 +189,11 @@ void Input()
                 dir = RIGHT;
             break;
         }
+        case 'q':
+        {
+             menu();
+             break;
+        }
 
         }
     }
@@ -231,6 +242,7 @@ void Logic()
         headX++;
         break;
     }
+
     default:
         break;
     }
@@ -245,8 +257,8 @@ void Logic()
     if (headX == fruitX && headY == fruitY)
     {
         score += 10;
-        fruitX = rand() % width;
-        fruitY = rand() % height;
+        fruitX = rand() % (width-4) + 3;
+        fruitY = rand() % (height-4) + 3;
         bool fruitIsOnTail = true;
 
         while (fruitIsOnTail)
@@ -255,8 +267,8 @@ void Logic()
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == fruitX && tailY[i] == fruitY)
                 {
-                    fruitX = rand() % (width - 1);
-                    fruitY = rand() % (height - 1);
+                    fruitX = rand() % (width-4) + 3;
+                    fruitY = rand() % (height-4) + 3;
                     fruitIsOnTail = true;
                 }
         }
@@ -290,16 +302,34 @@ void singleplayer()
         Input();
         Logic();
         game_score();
-
     }
 
     cout<<endl<<"         Better luck next time!"<<endl;
     Sleep(1000);
 }
 
-int main()
+void menu()
 {
     singleplayer();
-    return 0;
+}
 
+void multiplayer()
+{
+
+}
+
+void help()
+{
+
+}
+
+void highscores()
+{
+
+}
+
+int main()
+{
+    menu();
+    return 0;
 }
