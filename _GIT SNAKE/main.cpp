@@ -7,13 +7,16 @@
 
 using namespace std;
 
-bool gameOver;
+bool gameOver , quitted=false;
 const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score , uspeedX , uspeedY , boostX , boostY , dspeedX , dspeedY , lhalfX , lhalfY ;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
+int trin=1;
+
+
 
 //Prototypes:
 void menu();
@@ -194,7 +197,6 @@ void ShowConsoleCursor()
 
 void Setup()
 {
-    SetWindow(50,50);
     gameOver = false;
     dir = STOP;
     headX = width / 2;
@@ -274,6 +276,7 @@ void Draw()
 
 void Input()
 {
+    unsigned genericVariable;
     if (_kbhit())
     {
         switch (_getch())
@@ -422,6 +425,8 @@ void singleplayer()
     system("color 3");
     ShowConsoleCursor();
     Setup();
+    setfillstyle(SOLID_FILL ,WHITE);
+    bar(0,0,630,460);
     while (!gameOver)
     {
         Draw();
@@ -430,14 +435,39 @@ void singleplayer()
         dataBoard();
         Sleep(100);
     }
-
-    cout<<endl<<"         Better luck next time!"<<endl;
     Sleep(2000);
 }
 
 void menu()
 {
-    singleplayer();
+    setfillstyle(SOLID_FILL ,WHITE);
+    bar(0,0,630,460);
+    trin=1;
+    setfillstyle(SOLID_FILL , BLACK);
+    bar(100,60,530,400);
+    setfillstyle(SOLID_FILL , LIGHTGREEN);
+    setcolor(LIGHTGREEN);
+    settextstyle(8 , HORIZ_DIR , 4);
+    outtextxy(170 , 80 , "SINGLEPLAYER");
+    outtextxy(170 ,170 , "MULTIPLAYER");
+    outtextxy(170 ,260 , "HELP");
+    outtextxy(170 ,350 , "QUIT");
+    while(quitted!=true)
+    {
+             if(GetAsyncKeyState('W') && trin>1) trin--;
+             else if(GetAsyncKeyState('S') && trin<4) trin++;
+             else if(GetAsyncKeyState(VK_RETURN))
+             {
+                 if(trin==1) singleplayer();
+                 if(trin==4) quitted = true;
+             }
+             setfillstyle(SOLID_FILL ,BLACK);
+             bar(140,60,160,400);
+             setfillstyle(SOLID_FILL , LIGHTGREEN);
+             bar(140,trin*90,160,trin*90+10);
+             Sleep(100);
+
+    }
 }
 
 void multiplayer()
@@ -456,7 +486,8 @@ void highscores()
 }
 
 int main()
-{   game_window();
+{
+    game_window();
     bar(0,0,630,460);
     setfillstyle(SOLID_FILL , LIGHTGREEN);
     settextstyle(8 , HORIZ_DIR , 10);
