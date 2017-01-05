@@ -20,6 +20,7 @@ void menu();
 void multiplayer();
 void help();
 void highscores();
+void game_score();
 
 //Sprites:
 void headSprite(int x , int y)
@@ -89,6 +90,43 @@ void bodySprite(int x , int y)
 }
 
 
+void fruitSprite(int x , int y)
+{
+     int i , j , a[10][10]={
+      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+      0 , 0 , 0 , 2 , 2 , 2 , 2 , 0 , 0 , 0 ,
+      0 , 0 , 2 , 2 , 3 , 3 , 2 , 2 , 0 , 0 ,
+      0 , 2 , 2 , 3 , 2 , 2 , 3 , 2 , 0 , 0 ,
+      0 , 2 , 3 , 2 , 1 , 1 , 2 , 3 , 2 , 0 ,
+      0 , 2 , 3 , 2 , 1 , 1 , 2 , 3 , 2 , 0 ,
+      0 , 2 , 2 , 3 , 2 , 2 , 3 , 2 , 0 , 0 ,
+      0 , 0 , 2 , 2 , 3 , 3 , 2 , 2 , 0 , 0 ,
+      0 , 0 , 0 , 2 , 2 , 2 , 2 , 0 , 0 , 0 ,
+      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+      };
+      for(i=0;i<10;i++)
+        for(j=0;j<10;j++)
+        if(a[i][j]==1)
+      {
+          setfillstyle(SOLID_FILL , GREEN);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==2)
+      {
+          setfillstyle(SOLID_FILL , RED);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==3)
+      {
+          setfillstyle(SOLID_FILL , LIGHTRED);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==0)
+      {
+          setfillstyle(SOLID_FILL , LIGHTGRAY);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+}
 
 void SetWindow(int Width, int Height)
 {
@@ -124,6 +162,19 @@ void SetWindow(int Width, int Height)
 
     }
 
+}
+
+void dataBoard()
+{
+    setfillstyle(SOLID_FILL ,BLACK);
+    bar(440,60,610,280);
+    game_score();
+    settextstyle(8 , HORIZ_DIR , 1);
+    outtextxy(460 , 120 , "KING:");
+    setfillstyle(SOLID_FILL ,WHITE);
+    bar(430,160,620,180);
+    outtextxy(460 , 200 , "EXIT  - Q");
+    outtextxy(460 , 240 , "PUASE - P");
 }
 
 void ClearScreen(int x, int y)
@@ -164,8 +215,6 @@ void Draw()
     char fruitChar = 'f';
 
     ClearScreen( 0, 0 );   // system("cls");
-    setfillstyle(SOLID_FILL , BLACK);
-    bar(0,0,10,10);
     setfillstyle(SOLID_FILL , LIGHTGREEN);
     bar(20 , 20 , 420 , 30);
     bar(20 , 30 , 30 , 420);
@@ -178,13 +227,10 @@ void Draw()
             if (i == headY && j == headX)
             {
                 headSprite((i+2)*10,(j+2)*10);
-               // setfillstyle(SOLID_FILL , LIGHTGREEN);
-                //bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
             }
             else if (i == fruitY && j == fruitX)
             {
-                setfillstyle(SOLID_FILL , RED);
-                bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
+                fruitSprite((i+2)*10,(j+2)*10);
                 cout<<fruitChar;
             }
 
@@ -196,8 +242,6 @@ void Draw()
                     if (tailX[k] == j && tailY[k] == i)
                     {
                         bodySprite((i+2)*10,(j+2)*10);
-                       // setfillstyle(SOLID_FILL , LIGHTGREEN);
-                       // bar((i+2)*10 , (j+2)*10 , (i+2)*10+10 , (j+2)*10+10);
                         cout<<"b";
                         tailDisplayed = true;
                     }
@@ -337,8 +381,8 @@ void Logic()
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == fruitX && tailY[i] == fruitY)
                 {
-                    fruitX = rand() % (width-4) + 3;
-                    fruitY = rand() % (height-4) + 3;
+                    fruitX = rand() % (width-4) + 2;
+                    fruitY = rand() % (height-4) + 2;
                     fruitIsOnTail = true;
                 }
         }
@@ -349,8 +393,8 @@ void Logic()
             fruitIsOnHead = false;
                 if (headX == fruitX && headY == fruitY)
                 {
-                    fruitX = rand() % (width-4) + 3;
-                    fruitY = rand() % (height-4) + 3;
+                    fruitX = rand() % (width-4) + 2;
+                    fruitY = rand() % (height-4) + 2;
                     fruitIsOnHead = true;
                 }
         }
@@ -366,10 +410,11 @@ void game_window()
 
 void game_score()
 {
+    settextstyle(8 , HORIZ_DIR , 2);
     char arr[50];
-    sprintf(arr , "SCORE: %d " , score);
-    setcolor(LIGHTCYAN);
-    outtextxy(500 , 150 , arr);
+    sprintf(arr , "SCORE:%d " , score);
+    setcolor(LIGHTGREEN);
+    outtextxy(460 , 80 , arr);
 }
 
 void singleplayer()
@@ -377,17 +422,17 @@ void singleplayer()
     system("color 3");
     ShowConsoleCursor();
     Setup();
-    game_window();
     while (!gameOver)
     {
         Draw();
         Input();
         Logic();
-        game_score();
+        dataBoard();
+        Sleep(100);
     }
 
     cout<<endl<<"         Better luck next time!"<<endl;
-    Sleep(1000);
+    Sleep(2000);
 }
 
 void menu()
@@ -411,7 +456,16 @@ void highscores()
 }
 
 int main()
-{
+{   game_window();
+    bar(0,0,630,460);
+    setfillstyle(SOLID_FILL , LIGHTGREEN);
+    settextstyle(8 , HORIZ_DIR , 10);
+    outtextxy(200 ,160 , "T&T");
+    floodfill(202 ,190 , WHITE);
+    floodfill(320 ,240 , WHITE);
+    Sleep(3000);
+    setfillstyle(SOLID_FILL ,WHITE);
+    bar(0,0,630,460);
     menu();
     return 0;
 }
