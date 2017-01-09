@@ -7,14 +7,14 @@
 
 using namespace std;
 
-bool gameOver , quitted=false;
+bool gameOver , quitted=false , existsSpecial=false;
 const int height = 40;
 const int width = 40;
-int headX, headY, fruitX, fruitY, score , uspeedX , uspeedY , boostX , boostY , dspeedX , dspeedY , lhalfX , lhalfY ;
+int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , sloY , lhalfX , lhalfY ;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
-int trin=1;
+int trin=1 , scoreAdd=1;
 
 
 
@@ -24,6 +24,11 @@ void multiplayer();
 void help();
 void highscores();
 void game_score();
+void game_reset();
+void spawnSpeed();
+void spawnSlow();
+void spawnBoost();
+void spawnHalf();
 
 //Sprites:
 void headSprite(int x , int y)
@@ -131,6 +136,26 @@ void fruitSprite(int x , int y)
       }
 }
 
+void speedSprite(int x , int y)
+{
+
+}
+
+void slowSprite(int x , int y)
+{
+
+}
+
+void boostSprite(int x , int y)
+{
+
+}
+
+void halfSprite(int x , int y)a
+{
+
+}
+
 void SetWindow(int Width, int Height)
 {
     _COORD coord;
@@ -208,6 +233,7 @@ void Setup()
         fruitY = rand() % height;
     }
     score = 0;
+    scoreAdd = 1;
 }
 
 void Draw()
@@ -235,6 +261,9 @@ void Draw()
                 fruitSprite((i+2)*10,(j+2)*10);
                 cout<<fruitChar;
             }
+            else if(i == speedY && j == speedX)
+                speedSprite((i+2)*10,(j+2)*10);
+
 
             else
             {
@@ -276,44 +305,93 @@ void Draw()
 
 void Input()
 {
-    unsigned genericVariable;
-    if (_kbhit())
-    {
-        switch (_getch())
-        {
 
-        case 'a':
+        if(GetAsyncKeyState('A'))
         {
             if (dir != DOWN)
                 dir = UP;
-            break;
         }
-        case 'w':
+        else if(GetAsyncKeyState('W'))
         {
             if (dir != RIGHT)
                 dir = LEFT;
-            break;
         }
-        case 'd':
+        else if(GetAsyncKeyState('D'))
         {
             if (dir != UP)
                 dir = DOWN;
-            break;
         }
-        case 's':
+        else if(GetAsyncKeyState('S'))
         {
             if (dir != LEFT)
                 dir = RIGHT;
-            break;
         }
-        case 'q':
+        else if(GetAsyncKeyState('Q'))
         {
-             menu();
-             break;
+             gameOver = true;
+             game_reset();
         }
+}
+void spawnFruit()
+{
+    bool fruitIsOnTail = true;
+    while (fruitIsOnTail)
+        {
+            fruitIsOnTail = false;
+            for (int i=0; i<nTail; i++)
+                if (tailX[i] == fruitX && tailY[i] == fruitY)
+                {
+                    fruitX = rand() % (width-4) + 2;
+                    fruitY = rand() % (height-4) + 2;
+                    fruitIsOnTail = true;
+                }
+        }
+        bool fruitIsOnHead = true;
+        while (fruitIsOnHead)
+        {
+            fruitIsOnHead = false;
+                if (headX == fruitX && headY == fruitY)
+                {
+                    fruitX = rand() % (width-4) + 2;
+                    fruitY = rand() % (height-4) + 2;
+                    fruitIsOnHead = true;
+                }
+        }
+}
 
-        }
-    }
+void spawnSpecial()
+{
+   unsigned spec;
+   if(existsSpecial==false)
+   {
+       spec = rand() % 4 + 1;
+       if(spec==1) spawnSpeed();
+       else if(spec==2) spawnSlow();
+       else if(spec==3) spawnHalf();
+       else spawnBoost();
+       existsSpecial = true;
+   }
+
+}
+
+void spawnSpeed()
+{
+
+}
+
+void spawnSlow()
+{
+
+}
+
+void spawnBoost()
+{
+
+}
+
+void spawnHalf()
+{
+
 }
 
 void Logic()
@@ -373,38 +451,24 @@ void Logic()
 
     if (headX == fruitX && headY == fruitY)
     {
-        score += 10;
+        score += scoreAdd;
         fruitX = rand() % (width-4) + 3;
         fruitY = rand() % (height-4) + 3;
-        bool fruitIsOnTail = true;
 
-        while (fruitIsOnTail)
-        {
-            fruitIsOnTail = false;
-            for (int i=0; i<nTail; i++)
-                if (tailX[i] == fruitX && tailY[i] == fruitY)
-                {
-                    fruitX = rand() % (width-4) + 2;
-                    fruitY = rand() % (height-4) + 2;
-                    fruitIsOnTail = true;
-                }
-        }
-        bool fruitIsOnHead = true;
-
-        while (fruitIsOnHead)
-        {
-            fruitIsOnHead = false;
-                if (headX == fruitX && headY == fruitY)
-                {
-                    fruitX = rand() % (width-4) + 2;
-                    fruitY = rand() % (height-4) + 2;
-                    fruitIsOnHead = true;
-                }
-        }
+        spawnFruit();
         nTail++;
     }
 
+    spawnSpecial();
+
 }
+
+
+void game_reset()
+{
+    nTail = 0;
+}
+
 
 void game_window()
 {
@@ -436,6 +500,7 @@ void singleplayer()
         Sleep(100);
     }
     Sleep(2000);
+    menu();
 }
 
 void menu()
