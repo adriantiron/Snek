@@ -10,7 +10,7 @@ using namespace std;
 bool gameOver , quitted=false , paused = false , existsSpecial=false;
 const int height = 40;
 const int width = 40;
-int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , sloY , lhalfX , lhalfY ;
+int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , slowY , lhalfX , lhalfY ;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
@@ -26,10 +26,13 @@ void powersMenu();
 void highscores();
 void game_score();
 void game_reset();
+void spawnFruit();
 void spawnSpeed();
 void spawnSlow();
 void spawnBoost();
 void spawnHalf();
+
+
 
 //Sprites:
 void headSprite(int x , int y)
@@ -190,40 +193,12 @@ void halfSprite(int x , int y)
 
 }
 
-void SetWindow(int Width, int Height)
+void hideCmd()
 {
-    _COORD coord;
-    coord.X = Width;
-    coord.Y = Height;
-
-    _SMALL_RECT Rect;
-    Rect.Top = 0;
-    Rect.Left = 0;
-    Rect.Bottom = Height - 1;
-    Rect.Right = Width - 1;
-
-    // Get handle of the standard output
-    HANDLE Handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (Handle == NULL)
-    {
-        cout<<endl;
-
-    }
-
-    // Set screen buffer size to that specified in coord
-    if(!SetConsoleScreenBufferSize(Handle, coord))
-    {
-        cout<<endl;
-
-    }
-
-    // Set the window size to that specified in Rect
-    if(!SetConsoleWindowInfo(Handle, TRUE, &Rect))
-    {
-        cout<<endl;
-
-    }
-
+    HWND hide_cmd;
+    AllocConsole();
+    hide_cmd = FindWindowA("ConsoleWindowClass" , NULL);
+    ShowWindow(hide_cmd,0);
 }
 
 void dataBoard()
@@ -239,21 +214,6 @@ void dataBoard()
     outtextxy(460 , 240 , "PUASE - P");
 }
 
-void ClearScreen(int x, int y)
-{
-    COORD p = {x,y};
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),p);
-}
-
-void ShowConsoleCursor()
-{
-    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO cursorInfo;
-    GetConsoleCursorInfo(out,&cursorInfo);
-    cursorInfo.bVisible = 0;
-    SetConsoleCursorInfo(out,&cursorInfo);
-}
-
 void Setup()
 {
     gameOver = false;
@@ -261,22 +221,15 @@ void Setup()
     headX = width / 2;
     headY = height/ 2;
     srand(time(NULL));
-    while (fruitX != headX && fruitY != headY)
-    {
-        fruitX = rand() % width;
-        fruitY = rand() % height;
-    }
+    fruitX = rand() % (width-4) + 3;
+    fruitY = rand() % (height-4) + 3;
     score = 0;
     scoreAdd = 1;
+    spawnSpeed();
 }
 
 void Draw()
 {
-    char wallChar = 'w';
-    char snekHead = 'h';
-    char fruitChar = 'f';
-
-    ClearScreen( 0, 0 );   // system("cls");
     setfillstyle(SOLID_FILL , LIGHTGREEN);
     bar(20 , 20 , 420 , 30);
     bar(20 , 30 , 30 , 420);
@@ -287,14 +240,11 @@ void Draw()
         for (int j=1; j<=width; j++)
         {
             if (i == headY && j == headX)
-            {
                 headSprite((i+2)*10,(j+2)*10);
-            }
+
             else if (i == fruitY && j == fruitX)
-            {
                 fruitSprite((i+2)*10,(j+2)*10,1);
-                cout<<fruitChar;
-            }
+
             else if(i == speedY && j == speedX)
                 speedSprite((i+2)*10,(j+2)*10);
 
@@ -307,7 +257,6 @@ void Draw()
                     if (tailX[k] == j && tailY[k] == i)
                     {
                         bodySprite((i+2)*10,(j+2)*10);
-                        cout<<"b";
                         tailDisplayed = true;
                     }
                 }
@@ -315,26 +264,11 @@ void Draw()
                     {
                         setfillstyle(SOLID_FILL , LIGHTGRAY);
                         bar((i+2)*10 , (j+2)*10 , (i+2)*10+10, (j+2)*10+10);
-                        cout<<" ";
                     }
 
             }
-
-            if (j == width)
-                   cout<<wallChar;
         }
-
-        cout<<endl;
     }
-
-
-    for (int i=0; i<width; i++)
-            cout<<wallChar;
-
-
-    cout<<endl;
-    cout << "                Score:" << score << endl;
-
 }
 
 void Input()
@@ -380,8 +314,8 @@ void spawnFruit()
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == fruitX && tailY[i] == fruitY)
                 {
-                    fruitX = rand() % (width-4) + 2;
-                    fruitY = rand() % (height-4) + 2;
+                    fruitX = rand() % (width-4) + 3;
+                    fruitY = rand() % (height-4) + 3;
                     fruitIsOnTail = true;
                 }
         }
@@ -391,12 +325,11 @@ void spawnFruit()
             fruitIsOnHead = false;
                 if (headX == fruitX && headY == fruitY)
                 {
-                    fruitX = rand() % (width-4) + 2;
-                    fruitY = rand() % (height-4) + 2;
+                    fruitX = rand() % (width-4) + 3;
+                    fruitY = rand() % (height-4) + 3;
                     fruitIsOnHead = true;
                 }
         }
-        spawnSpeed();
 }
 
 void spawnSpecial()
@@ -514,13 +447,10 @@ void Logic()
     if (headX == fruitX && headY == fruitY)
     {
         score += scoreAdd;
-        fruitX = rand() % (width-4) + 3;
-        fruitY = rand() % (height-4) + 3;
 
         spawnFruit();
         nTail++;
     }
-
     spawnSpecial();
 
 }
@@ -548,8 +478,6 @@ void game_score()
 
 void singleplayer()
 {
-    system("color 3");
-    ShowConsoleCursor();
     Setup();
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
@@ -617,7 +545,7 @@ void help()
     outtextxy(110 , 140 , "Use Q to quit the match , and P");
     outtextxy(110 , 160 , "to pause it.");
     outtextxy(110 , 200 , "King represents the highscore.");
-    outtextxy(110 , 240 , "In multiplyer you will compete");
+    outtextxy(110 , 240 , "In multiplayer you will compete");
     outtextxy(110 , 260 , "against a computer controlled");
     outtextxy(110 , 280 , "snake that will try to win.");
     outtextxy(110 , 320 , "E - info on the power-ups");
@@ -637,6 +565,7 @@ void help()
             powersMenu();
         }
     }
+
 }
 
 void powersMenu()
@@ -652,13 +581,13 @@ void powersMenu()
     fruitSprite(110 , 125 , 2);
     outtextxy(130 , 120 , "- fruit");
     outtextxy(110 , 135 , "Gives one point when eaten and adds");
-    outtextxy(110 , 150 , "one to the lenght of the snake.");
+    outtextxy(110 , 150 , "one to the length of the snake.");
     outtextxy(130 , 170 , "- speed");
     outtextxy(110 , 185 , "Doubles the speed of the snake.");
     outtextxy(130 , 205 , "- slow");
-    outtextxy(110 , 220 , "Halfs the speed of the snake.");
+    outtextxy(110 , 220 , "Halves the speed of the snake.");
     outtextxy(130 , 240 , "- cut");
-    outtextxy(110 , 255 , "Halfs the size of the snake.");
+    outtextxy(110 , 255 , "Halves the size of the snake.");
     outtextxy(130 , 275 , "- boost");
     outtextxy(110 , 290 , "Doubles the points you get when eating");
     outtextxy(110 , 305 , "a fruit.");
