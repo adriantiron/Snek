@@ -7,14 +7,14 @@
 
 using namespace std;
 
-bool gameOver , quitted=false , paused = false , existsSpecial=false;
+bool gameOver , quitted=false , paused = false , existsSpecial=false ;
 const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , slowY , lhalfX , lhalfY ;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
-int trin=1 , scoreAdd=1 , movSpeed=100;
+int trin=1 , scoreAdd=1 , movSpeed=100 ;
 
 
 
@@ -27,6 +27,7 @@ void highscores();
 void game_score();
 void game_reset();
 void spawnFruit();
+void spawnSpecial();
 void spawnSpeed();
 void spawnSlow();
 void spawnBoost();
@@ -214,6 +215,17 @@ void dataBoard()
     outtextxy(460 , 240 , "PUASE - P");
 }
 
+void powersInit()
+{
+    speedX = rand() % (width-4) + 3;
+    speedY = rand() % (height-4) + 3;
+    slowX = rand() % (width-4) + 3;
+    slowY = rand() % (height-4) + 3;
+    lhalfX = rand() % (width-4) + 3;
+    lhalfY = rand() % (height-4) + 3;
+    boostX = rand() % (width-4) + 3;
+    boostY = rand() % (height-4) + 3;
+}
 void Setup()
 {
     gameOver = false;
@@ -225,7 +237,7 @@ void Setup()
     fruitY = rand() % (height-4) + 3;
     score = 0;
     scoreAdd = 1;
-    spawnSpeed();
+    spawnSpecial();
 }
 
 void Draw()
@@ -337,11 +349,11 @@ void spawnSpecial()
    unsigned spec;
    if(existsSpecial==false)
    {
-       spec = rand() % 4 + 1;
+       spec = 1 ; //rand() % 4 + 1;
        if(spec==1) spawnSpeed();
-       else if(spec==2) spawnSlow();
-       else if(spec==3) spawnHalf();
-       else spawnBoost();
+       //else if(spec==2) spawnSlow();
+       //else if(spec==3) spawnHalf();
+       //else spawnBoost();
        existsSpecial = true;
    }
 
@@ -356,8 +368,8 @@ void spawnSpeed()
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == speedX && tailY[i] == speedY)
                 {
-                    speedX = rand() % (width-4) + 2;
-                    speedY = rand() % (height-4) + 2;
+                    speedX = rand() % (width-4) + 3;
+                    speedY = rand() % (height-4) + 3;
                     isOnTail = true;
                 }
         }
@@ -367,11 +379,13 @@ void spawnSpeed()
             isOnHead = false;
                 if (headX == speedX && headY == speedY)
                 {
-                    speedX = rand() % (width-4) + 2;
-                    speedY = rand() % (height-4) + 2;
+                    speedX = rand() % (width-4) + 3;
+                    speedY = rand() % (height-4) + 3;
                     isOnHead = true;
                 }
         }
+
+        cout<<"speed spawned"<<endl;
 }
 
 void spawnSlow()
@@ -451,6 +465,8 @@ void Logic()
         spawnFruit();
         nTail++;
     }
+    else if (headX == speedX && headY == speedY)
+         cout<<"speed TAKEN"<<endl;
     spawnSpecial();
 
 }
@@ -610,6 +626,7 @@ void highscores()
 
 int main()
 {
+    powersInit();
     game_window();
     bar(0,0,630,460);
     setfillstyle(SOLID_FILL , LIGHTGREEN);
