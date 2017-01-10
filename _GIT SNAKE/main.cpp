@@ -7,14 +7,14 @@
 
 using namespace std;
 
-bool gameOver , quitted=false , existsSpecial=false;
+bool gameOver , quitted=false , paused = false , existsSpecial=false;
 const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , sloY , lhalfX , lhalfY ;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
-int trin=1 , scoreAdd=1;
+int trin=1 , scoreAdd=1 , movSpeed=100;
 
 
 
@@ -22,6 +22,7 @@ int trin=1 , scoreAdd=1;
 void menu();
 void multiplayer();
 void help();
+void powersMenu();
 void highscores();
 void game_score();
 void game_reset();
@@ -98,7 +99,7 @@ void bodySprite(int x , int y)
 }
 
 
-void fruitSprite(int x , int y)
+void fruitSprite(int x , int y , int z)
 {
      int i , j , a[10][10]={
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
@@ -129,16 +130,49 @@ void fruitSprite(int x , int y)
           setfillstyle(SOLID_FILL , LIGHTRED);
           bar(x+i,y+j,x+i+1,y+j+1);
       }
-      else if(a[i][j]==0)
+      else if(a[i][j]==0 && z==1)
       {
           setfillstyle(SOLID_FILL , LIGHTGRAY);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==0 && z==2)
+      {
+          setfillstyle(SOLID_FILL , BLACK);
           bar(x+i,y+j,x+i+1,y+j+1);
       }
 }
 
 void speedSprite(int x , int y)
 {
-
+      int i , j , a[10][10]={
+      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
+      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
+      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
+      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
+      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+      };
+      for(i=0;i<10;i++)
+        for(j=0;j<10;j++)
+        if(a[i][j]==1)
+      {
+          setfillstyle(SOLID_FILL , LIGHTGREEN);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==2)
+      {
+          setfillstyle(SOLID_FILL , WHITE);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
+      else if(a[i][j]==0)
+      {
+          setfillstyle(SOLID_FILL , LIGHTGRAY);
+          bar(x+i,y+j,x+i+1,y+j+1);
+      }
 }
 
 void slowSprite(int x , int y)
@@ -151,7 +185,7 @@ void boostSprite(int x , int y)
 
 }
 
-void halfSprite(int x , int y)a
+void halfSprite(int x , int y)
 {
 
 }
@@ -258,7 +292,7 @@ void Draw()
             }
             else if (i == fruitY && j == fruitX)
             {
-                fruitSprite((i+2)*10,(j+2)*10);
+                fruitSprite((i+2)*10,(j+2)*10,1);
                 cout<<fruitChar;
             }
             else if(i == speedY && j == speedX)
@@ -331,7 +365,12 @@ void Input()
              gameOver = true;
              game_reset();
         }
+        else if(GetAsyncKeyState('P'))
+            if(paused == false) paused = true;
+            else if(paused == true) paused = false;
+
 }
+
 void spawnFruit()
 {
     bool fruitIsOnTail = true;
@@ -357,6 +396,7 @@ void spawnFruit()
                     fruitIsOnHead = true;
                 }
         }
+        spawnSpeed();
 }
 
 void spawnSpecial()
@@ -376,7 +416,29 @@ void spawnSpecial()
 
 void spawnSpeed()
 {
-
+    bool isOnTail = true;
+    while (isOnTail)
+        {
+            isOnTail = false;
+            for (int i=0; i<nTail; i++)
+                if (tailX[i] == speedX && tailY[i] == speedY)
+                {
+                    speedX = rand() % (width-4) + 2;
+                    speedY = rand() % (height-4) + 2;
+                    isOnTail = true;
+                }
+        }
+        bool isOnHead = true;
+        while (isOnHead)
+        {
+            isOnHead = false;
+                if (headX == speedX && headY == speedY)
+                {
+                    speedX = rand() % (width-4) + 2;
+                    speedY = rand() % (height-4) + 2;
+                    isOnHead = true;
+                }
+        }
 }
 
 void spawnSlow()
@@ -497,7 +559,7 @@ void singleplayer()
         Input();
         Logic();
         dataBoard();
-        Sleep(100);
+        Sleep(movSpeed); //the SMALLER the movSpeed is the FASTER the snake will go
     }
     Sleep(2000);
     menu();
@@ -517,13 +579,15 @@ void menu()
     outtextxy(170 ,170 , "MULTIPLAYER");
     outtextxy(170 ,260 , "HELP");
     outtextxy(170 ,350 , "QUIT");
+    Sleep(400);
     while(quitted!=true)
     {
              if(GetAsyncKeyState('W') && trin>1) trin--;
              else if(GetAsyncKeyState('S') && trin<4) trin++;
-             else if(GetAsyncKeyState(VK_RETURN))
+             else if(GetAsyncKeyState('E'))
              {
                  if(trin==1) singleplayer();
+                 if(trin==3) help();
                  if(trin==4) quitted = true;
              }
              setfillstyle(SOLID_FILL ,BLACK);
@@ -542,7 +606,72 @@ void multiplayer()
 
 void help()
 {
+    setfillstyle(SOLID_FILL ,WHITE);
+    bar(0,0,630,460);
+    setfillstyle(SOLID_FILL , BLACK);
+    bar(100,60,530,400);
+    setcolor(LIGHTGREEN);
+    settextstyle(8 , HORIZ_DIR , 2);
+    outtextxy(110 , 80 , "Use W-A-S-D to move in the menu ");
+    outtextxy(110 , 100 , "and in the game.Press E to select.");
+    outtextxy(110 , 140 , "Use Q to quit the match , and P");
+    outtextxy(110 , 160 , "to pause it.");
+    outtextxy(110 , 200 , "King represents the highscore.");
+    outtextxy(110 , 240 , "In multiplyer you will compete");
+    outtextxy(110 , 260 , "against a computer controlled");
+    outtextxy(110 , 280 , "snake that will try to win.");
+    outtextxy(110 , 320 , "E - info on the power-ups");
+    outtextxy(110 , 360 , "Q - go back to the menu");
+    bool inHelp = true;
+    Sleep(400);
+    while(inHelp)
+    {
+        if(GetAsyncKeyState('Q'))
+        {
+            inHelp = false;
+            menu();
+        }
+        if(GetAsyncKeyState('E'))
+        {
+            inHelp = false;
+            powersMenu();
+        }
+    }
+}
 
+void powersMenu()
+{
+    bool inPowerMenu = true;
+    setfillstyle(SOLID_FILL ,WHITE);
+    bar(0,0,630,460);
+    setfillstyle(SOLID_FILL , BLACK);
+    bar(100,60,530,400);
+    setcolor(LIGHTGREEN);
+    settextstyle(8 , HORIZ_DIR , 1);
+    outtextxy(110 , 80 , "            POWER-UPS");
+    fruitSprite(110 , 125 , 2);
+    outtextxy(130 , 120 , "- fruit");
+    outtextxy(110 , 135 , "Gives one point when eaten and adds");
+    outtextxy(110 , 150 , "one to the lenght of the snake.");
+    outtextxy(130 , 170 , "- speed");
+    outtextxy(110 , 185 , "Doubles the speed of the snake.");
+    outtextxy(130 , 205 , "- slow");
+    outtextxy(110 , 220 , "Halfs the speed of the snake.");
+    outtextxy(130 , 240 , "- cut");
+    outtextxy(110 , 255 , "Halfs the size of the snake.");
+    outtextxy(130 , 275 , "- boost");
+    outtextxy(110 , 290 , "Doubles the points you get when eating");
+    outtextxy(110 , 305 , "a fruit.");
+    outtextxy(110 , 360 , "Q - go back to the help page");
+    Sleep(400);
+    while(inPowerMenu)
+    {
+        if(GetAsyncKeyState('Q'))
+        {
+            inPowerMenu = false;
+            help();
+        }
+    }
 }
 
 void highscores()
