@@ -4,8 +4,11 @@
 #include <time.h>
 #include <graphics.h>
 #include <stdio.h>
+#include <chrono>
+#include <fstream>
 
 using namespace std;
+
 
 bool gameOver , quitted=false , paused = false , existsSpecial=false ;
 const int height = 40;
@@ -15,7 +18,8 @@ enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
 int trin=1 , scoreAdd=1 , movSpeed=100 ;
-
+unsigned int highScore;
+auto startTime = std::chrono::steady_clock::now();
 
 
 //Prototypes:
@@ -208,7 +212,17 @@ void dataBoard()
     bar(440,60,610,280);
     game_score();
     settextstyle(8 , HORIZ_DIR , 1);
+
+    ifstream fin("highscore.txt");
+    fin.seekg(0);
+    fin>>highScore;
+    fin.close();
+
+    char arr[50];
+    sprintf(arr, "%d", highScore);
+
     outtextxy(460 , 120 , "KING:");
+    outtextxy(520 , 120 , arr);
     setfillstyle(SOLID_FILL ,WHITE);
     bar(430,160,620,180);
     outtextxy(460 , 200 , "EXIT  - Q");
@@ -619,10 +633,6 @@ void powersMenu()
     }
 }
 
-void highscores()
-{
-
-}
 
 int main()
 {
@@ -638,5 +648,12 @@ int main()
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
     menu();
+
+    ofstream fout("highscore.txt");
+    if (score>highScore)
+        highScore = score;
+    fout<<highScore;
+    fout.close();
+
     return 0;
 }
