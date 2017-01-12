@@ -34,6 +34,7 @@
 		</Compiler>
 		<Unit filename="highscore.txt" />
 		<Unit filename="main.cpp" />
+		<Unit filename="sprites.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

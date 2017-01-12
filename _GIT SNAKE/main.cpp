@@ -4,22 +4,23 @@
 #include <time.h>
 #include <graphics.h>
 #include <stdio.h>
-#include <chrono>
 #include <fstream>
+#include "sprites.h"
+
 
 using namespace std;
 
 
-bool gameOver , quitted=false , paused = false , existsSpecial=false ;
+bool gameOver , quitted=false , paused = false , existsSpecial=false , powerupInUse = false ;
 const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , slowY , lhalfX , lhalfY ;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
-int trin=1 , scoreAdd=1 , movSpeed=100 ;
+int trin=1 , scoreAdd=1 , movSpeed=80 ;
 unsigned int highScore;
-auto startTime = std::chrono::steady_clock::now();
+time_t startTime;
 
 
 //Prototypes:
@@ -39,164 +40,6 @@ void spawnHalf();
 
 
 
-//Sprites:
-void headSprite(int x , int y)
-{
-      int i , j , a[10][10]={
-      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
-      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
-      1 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 1 ,
-      1 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 1 ,
-      1 , 2 , 1 , 2 , 2 , 2 , 2 , 1 , 2 , 1 ,
-      1 , 2 , 1 , 2 , 2 , 2 , 2 , 1 , 2 , 1 ,
-      1 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 1 ,
-      1 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 1 ,
-      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
-      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
-      };
-      for(i=0;i<10;i++)
-        for(j=0;j<10;j++)
-        if(a[i][j]==1)
-      {
-          setfillstyle(SOLID_FILL , LIGHTGREEN);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==2)
-      {
-          setfillstyle(SOLID_FILL , WHITE);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==0)
-      {
-          setfillstyle(SOLID_FILL , LIGHTGRAY);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-}
-
-void bodySprite(int x , int y)
-{
-     int i , j , a[10][10]={
-      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
-      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
-      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
-      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-      };
-      for(i=0;i<10;i++)
-        for(j=0;j<10;j++)
-        if(a[i][j]==1)
-      {
-          setfillstyle(SOLID_FILL , LIGHTGREEN);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==2)
-      {
-          setfillstyle(SOLID_FILL , WHITE);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==0)
-      {
-          setfillstyle(SOLID_FILL , LIGHTGRAY);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-}
-
-
-void fruitSprite(int x , int y , int z)
-{
-     int i , j , a[10][10]={
-      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-      0 , 0 , 0 , 2 , 2 , 2 , 2 , 0 , 0 , 0 ,
-      0 , 0 , 2 , 2 , 3 , 3 , 2 , 2 , 0 , 0 ,
-      0 , 2 , 2 , 3 , 2 , 2 , 3 , 2 , 0 , 0 ,
-      0 , 2 , 3 , 2 , 1 , 1 , 2 , 3 , 2 , 0 ,
-      0 , 2 , 3 , 2 , 1 , 1 , 2 , 3 , 2 , 0 ,
-      0 , 2 , 2 , 3 , 2 , 2 , 3 , 2 , 0 , 0 ,
-      0 , 0 , 2 , 2 , 3 , 3 , 2 , 2 , 0 , 0 ,
-      0 , 0 , 0 , 2 , 2 , 2 , 2 , 0 , 0 , 0 ,
-      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-      };
-      for(i=0;i<10;i++)
-        for(j=0;j<10;j++)
-        if(a[i][j]==1)
-      {
-          setfillstyle(SOLID_FILL , GREEN);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==2)
-      {
-          setfillstyle(SOLID_FILL , RED);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==3)
-      {
-          setfillstyle(SOLID_FILL , LIGHTRED);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==0 && z==1)
-      {
-          setfillstyle(SOLID_FILL , LIGHTGRAY);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==0 && z==2)
-      {
-          setfillstyle(SOLID_FILL , BLACK);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-}
-
-void speedSprite(int x , int y)
-{
-      int i , j , a[10][10]={
-      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
-      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 1 , 1 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 1 , 0 ,
-      0 , 1 , 1 , 2 , 2 , 2 , 2 , 1 , 1 , 0 ,
-      0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 ,
-      0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-      };
-      for(i=0;i<10;i++)
-        for(j=0;j<10;j++)
-        if(a[i][j]==1)
-      {
-          setfillstyle(SOLID_FILL , LIGHTGREEN);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==2)
-      {
-          setfillstyle(SOLID_FILL , WHITE);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-      else if(a[i][j]==0)
-      {
-          setfillstyle(SOLID_FILL , LIGHTGRAY);
-          bar(x+i,y+j,x+i+1,y+j+1);
-      }
-}
-
-void slowSprite(int x , int y)
-{
-
-}
-
-void boostSprite(int x , int y)
-{
-
-}
-
-void halfSprite(int x , int y)
-{
-
-}
 
 void hideCmd()
 {
@@ -209,7 +52,7 @@ void hideCmd()
 void dataBoard()
 {
     setfillstyle(SOLID_FILL ,BLACK);
-    bar(440,60,610,280);
+    bar(440,60,610,320);
     game_score();
     settextstyle(8 , HORIZ_DIR , 1);
 
@@ -226,7 +69,8 @@ void dataBoard()
     setfillstyle(SOLID_FILL ,WHITE);
     bar(430,160,620,180);
     outtextxy(460 , 200 , "EXIT  - Q");
-    outtextxy(460 , 240 , "PUASE - P");
+    outtextxy(460 , 240 , "PAUSE - P");
+    outtextxy(460 , 280 , "RESUME - O");
 }
 
 void powersInit()
@@ -250,8 +94,8 @@ void Setup()
     fruitX = rand() % (width-4) + 3;
     fruitY = rand() % (height-4) + 3;
     score = 0;
-    scoreAdd = 1;
-    spawnSpecial();
+    scoreAdd = 10;
+
 }
 
 void Draw()
@@ -326,9 +170,15 @@ void Input()
              game_reset();
         }
         else if(GetAsyncKeyState('P'))
-            if(paused == false) paused = true;
-            else if(paused == true) paused = false;
+            {
+               while (true)
+               {
+                   if (GetAsyncKeyState('O'))
+                        break;
+               }
 
+
+            }
 }
 
 void spawnFruit()
@@ -375,6 +225,9 @@ void spawnSpecial()
 
 void spawnSpeed()
 {
+    speedX = rand() % (width-4) + 3;
+    speedY = rand() % (height-4) + 3;
+
     bool isOnTail = true;
     while (isOnTail)
         {
@@ -399,7 +252,6 @@ void spawnSpeed()
                 }
         }
 
-        cout<<"speed spawned"<<endl;
 }
 
 void spawnSlow()
@@ -477,17 +329,45 @@ void Logic()
         score += scoreAdd;
 
         spawnFruit();
-        nTail++;
-    }
-    else if (headX == speedX && headY == speedY)
-         cout<<"speed TAKEN"<<endl;
-    spawnSpecial();
 
+        nTail++;
+
+        if (score == 10)
+        {
+            spawnSpecial();
+        }
+    }
+
+    else if (headX == speedX && headY == speedY)
+         {
+            existsSpecial = false;
+            powerupInUse = true;
+            time (&startTime);
+            movSpeed /= 4;
+            speedX = speedY = 0;
+
+         }
+
+    if (powerupInUse)
+    {
+
+        time_t endTime;
+        time (&endTime);
+        double elapsed_secs = difftime (endTime,startTime);
+        if (elapsed_secs > 12 && elapsed_secs < 14)
+        {
+            powerupInUse = false;
+            movSpeed *= 4;
+            spawnSpecial();
+        }
+    }
 }
 
 
 void game_reset()
 {
+    for (int i=0; i<nTail; i++)
+        tailX[i] = tailY[i] = 0;
     nTail = 0;
 }
 
@@ -508,6 +388,7 @@ void game_score()
 
 void singleplayer()
 {
+    game_reset();
     Setup();
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
@@ -519,8 +400,11 @@ void singleplayer()
         dataBoard();
         Sleep(movSpeed); //the SMALLER the movSpeed is the FASTER the snake will go
     }
+    Sleep(200);
+    settextstyle(4, HORIZ_DIR, 3);
+    outtextxy(55, 150, "Better luck next time!");
     Sleep(2000);
-    menu();
+    exit(0);
 }
 
 void menu()
@@ -636,7 +520,6 @@ void powersMenu()
 
 int main()
 {
-    powersInit();
     game_window();
     bar(0,0,630,460);
     setfillstyle(SOLID_FILL , LIGHTGREEN);

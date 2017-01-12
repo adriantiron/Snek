@@ -4,7 +4,20 @@
 	<ActiveTarget name="Debug" />
 	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="16164" topLine="631" />
+			<Cursor1 position="1286" topLine="42" />
+		</Cursor>
+		<Folding>
+			<Collapse line="44" />
+			<Collapse line="257" />
+			<Collapse line="267" />
+			<Collapse line="375" />
+			<Collapse line="380" />
+			<Collapse line="485" />
+		</Folding>
+	</File>
+	<File name="sprites.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4155" topLine="131" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
