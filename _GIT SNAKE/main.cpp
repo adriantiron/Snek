@@ -29,7 +29,6 @@ void menu();
 void multiplayer();
 void help();
 void powersMenu();
-void highscores();
 void game_score();
 void game_reset();
 void spawnFruit();
@@ -56,11 +55,6 @@ void dataBoard()
     bar(440,60,610,320);
     game_score();
     settextstyle(8 , HORIZ_DIR , 1);
-
-    ifstream fin("highscore.txt");
-    fin.seekg(0);
-    fin>>highScore;
-    fin.close();
 
     char arr[50];
     sprintf(arr, "%d", highScore);
@@ -118,11 +112,34 @@ void Draw()
                 fruitSprite((i+2)*10,(j+2)*10,1);
 
             else if(i == speedY && j == speedX)
-                speedSprite((i+2)*10,(j+2)*10);
+                {
+                    speedSprite((i+2)*10,(j+2)*10);
 
+                    time_t endTime;
+                    time (&endTime);
+                    double elapsed_secs = difftime (endTime,startTime);
+
+                    if (elapsed_secs > 11 && elapsed_secs < 13)
+                        {
+                            speedX = speedY = 0;
+                            existsSpecial = false;
+                            spawnSpecial();
+                        }
+                }
              else if(i == slowY && j == slowX)
-                slowSprite((i+2)*10,(j+2)*10);
+                {
+                    slowSprite((i+2)*10,(j+2)*10);
 
+                    time_t endTime;
+                    time (&endTime);
+                    double elapsed_secs = difftime (endTime,startTime);
+                    if (elapsed_secs > 8 && elapsed_secs < 10)
+                        {
+                            slowX = slowY = 0;
+                            existsSpecial = false;
+                            spawnSpecial();
+                        }
+                }
             else
             {
                 bool tailDisplayed = false;
@@ -136,7 +153,7 @@ void Draw()
                 }
                 if (!tailDisplayed && j<=width-2 && i<=height-2)
                     {
-                        setfillstyle(SOLID_FILL , LIGHTGRAY);
+                        setfillstyle(SOLID_FILL , DARKGRAY);
                         bar((i+2)*10 , (j+2)*10 , (i+2)*10+10, (j+2)*10+10);
                     }
 
@@ -187,28 +204,33 @@ void Input()
 
 void spawnFruit()
 {
-    bool fruitIsOnTail = true;
-    while (fruitIsOnTail)
+    fruitX = rand() % (width-4) + 3;
+    fruitY = rand() % (height-4) + 3;
+
+    bool isOnTail = true;
+    bool isOnHead = true;
+
+    while (isOnTail && isOnHead)
         {
-            fruitIsOnTail = false;
+            isOnTail = false;
+            isOnHead = false;
+
             for (int i=0; i<nTail; i++)
-                if (tailX[i] == fruitX && tailY[i] == fruitY)
+                if (tailX[i] == speedX && tailY[i] == speedY)
                 {
                     fruitX = rand() % (width-4) + 3;
                     fruitY = rand() % (height-4) + 3;
-                    fruitIsOnTail = true;
+                    isOnTail = true;
                 }
-        }
-        bool fruitIsOnHead = true;
-        while (fruitIsOnHead)
-        {
-            fruitIsOnHead = false;
-                if (headX == fruitX && headY == fruitY)
+
+
+                if (headX == speedX && headY == speedY)
                 {
                     fruitX = rand() % (width-4) + 3;
-                    fruitY = rand() % (height-4) + 3;
-                    fruitIsOnHead = true;
+                    speedY = rand() % (height-4) + 3;
+                    isOnHead = true;
                 }
+
         }
 }
 
@@ -229,13 +251,18 @@ void spawnSpecial()
 
 void spawnSpeed()
 {
+
     speedX = rand() % (width-4) + 3;
     speedY = rand() % (height-4) + 3;
 
     bool isOnTail = true;
-    while (isOnTail)
+    bool isOnHead = true;
+
+    while (isOnTail && isOnHead)
         {
             isOnTail = false;
+            isOnHead = false;
+
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == speedX && tailY[i] == speedY)
                 {
@@ -243,19 +270,18 @@ void spawnSpeed()
                     speedY = rand() % (height-4) + 3;
                     isOnTail = true;
                 }
-        }
-        bool isOnHead = true;
-        while (isOnHead)
-        {
-            isOnHead = false;
+
+
                 if (headX == speedX && headY == speedY)
                 {
                     speedX = rand() % (width-4) + 3;
                     speedY = rand() % (height-4) + 3;
                     isOnHead = true;
                 }
+
         }
 
+    time(&startTime);
 }
 
 void spawnSlow()
@@ -264,28 +290,32 @@ void spawnSlow()
     slowY = rand() % (height-4) + 3;
 
     bool isOnTail = true;
-    while (isOnTail)
-    {
-        isOnTail = false;
-        for (int i=0; i<nTail; i++)
-            if (tailX[i] == slowX && tailY[i] == slowY)
-            {
-                slowX = rand() % (width-4) + 3;
-                slowY = rand() % (height-4) + 3;
-                isOnTail = true;
-            }
-    }
     bool isOnHead = true;
-    while (isOnHead)
-    {
-        isOnHead = false;
-        if (headX == slowX && headY == slowY)
+
+    while (isOnTail && isOnHead)
         {
-            slowX = rand() % (width-4) + 3;
-            slowY = rand() % (height-4) + 3;
-            isOnHead = true;
+            isOnTail = false;
+            isOnHead = false;
+
+            for (int i=0; i<nTail; i++)
+                if (tailX[i] == speedX && tailY[i] == speedY)
+                {
+                    slowX = rand() % (width-4) + 3;
+                    slowY = rand() % (height-4) + 3;
+                    isOnTail = true;
+                }
+
+
+                if (headX == speedX && headY == speedY)
+                {
+                    slowX = rand() % (width-4) + 3;
+                    slowY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+
         }
-    }
+
+    time(&startTime);
 }
 
 void spawnBoost()
@@ -374,7 +404,6 @@ void Logic()
             time (&startTime);
             movSpeed /= 4;
             speedX = speedY = 0;
-
          }
     else if (headX == slowX && headY == slowY)
          {
@@ -415,6 +444,10 @@ void Logic()
     }
 }
 
+void update_HighScore()
+{
+    if (score > highScore) highScore = score;
+}
 
 void game_reset()
 {
@@ -449,14 +482,16 @@ void singleplayer()
         Draw();
         Input();
         Logic();
+        update_HighScore();
         dataBoard();
         Sleep(movSpeed); //the SMALLER the movSpeed is the FASTER the snake will go
     }
     Sleep(200);
-    settextstyle(4, HORIZ_DIR, 3);
-    outtextxy(55, 150, "Better luck next time!");
+    setcolor(RED);
+    settextstyle(4, HORIZ_DIR, 5);
+    outtextxy(60, 165, "YOU DIED!");
     Sleep(2000);
-    exit(0);
+    menu();
 }
 
 void menu()
@@ -582,6 +617,12 @@ int main()
     Sleep(3000);
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
+
+    ifstream fin("highscore.txt");
+    fin.seekg(0);
+    fin>>highScore;
+    fin.close();
+
     menu();
 
     ofstream fout("highscore.txt");
