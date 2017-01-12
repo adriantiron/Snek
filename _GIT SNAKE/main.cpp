@@ -11,7 +11,8 @@
 using namespace std;
 
 
-bool gameOver , quitted=false , paused = false , existsSpecial=false , powerupInUse = false ;
+bool gameOver , quitted=false , paused = false , existsSpecial=false;
+bool speedInUse = false , slowInUse = false;
 const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , slowY , lhalfX , lhalfY ;
@@ -84,6 +85,7 @@ void powersInit()
     boostX = rand() % (width-4) + 3;
     boostY = rand() % (height-4) + 3;
 }
+
 void Setup()
 {
     gameOver = false;
@@ -118,6 +120,8 @@ void Draw()
             else if(i == speedY && j == speedX)
                 speedSprite((i+2)*10,(j+2)*10);
 
+             else if(i == slowY && j == slowX)
+                slowSprite((i+2)*10,(j+2)*10);
 
             else
             {
@@ -213,9 +217,9 @@ void spawnSpecial()
    unsigned spec;
    if(existsSpecial==false)
    {
-       spec = 1 ; //rand() % 4 + 1;
+       spec = rand() % 2 + 1;
        if(spec==1) spawnSpeed();
-       //else if(spec==2) spawnSlow();
+       else if(spec==2) spawnSlow();
        //else if(spec==3) spawnHalf();
        //else spawnBoost();
        existsSpecial = true;
@@ -256,7 +260,32 @@ void spawnSpeed()
 
 void spawnSlow()
 {
+    slowX = rand() % (width-4) + 3;
+    slowY = rand() % (height-4) + 3;
 
+    bool isOnTail = true;
+    while (isOnTail)
+    {
+        isOnTail = false;
+        for (int i=0; i<nTail; i++)
+            if (tailX[i] == slowX && tailY[i] == slowY)
+            {
+                slowX = rand() % (width-4) + 3;
+                slowY = rand() % (height-4) + 3;
+                isOnTail = true;
+            }
+    }
+    bool isOnHead = true;
+    while (isOnHead)
+    {
+        isOnHead = false;
+        if (headX == slowX && headY == slowY)
+        {
+            slowX = rand() % (width-4) + 3;
+            slowY = rand() % (height-4) + 3;
+            isOnHead = true;
+        }
+    }
 }
 
 void spawnBoost()
@@ -341,23 +370,46 @@ void Logic()
     else if (headX == speedX && headY == speedY)
          {
             existsSpecial = false;
-            powerupInUse = true;
+            speedInUse = true;
             time (&startTime);
             movSpeed /= 4;
             speedX = speedY = 0;
 
          }
+    else if (headX == slowX && headY == slowY)
+         {
+            existsSpecial = false;
+            slowInUse = true;
+            time (&startTime);
+            movSpeed *= 2;
+            slowX = slowY = 0;
+         }
 
-    if (powerupInUse)
+    if (speedInUse)
     {
 
         time_t endTime;
         time (&endTime);
         double elapsed_secs = difftime (endTime,startTime);
+
         if (elapsed_secs > 12 && elapsed_secs < 14)
         {
-            powerupInUse = false;
+            speedInUse = false;
             movSpeed *= 4;
+            spawnSpecial();
+        }
+    }
+    else if (slowInUse)
+    {
+
+        time_t endTime;
+        time (&endTime);
+        double elapsed_secs = difftime (endTime,startTime);
+
+        if (elapsed_secs > 8 && elapsed_secs < 10)
+        {
+            slowInUse = false;
+            movSpeed /= 2;
             spawnSpecial();
         }
     }
