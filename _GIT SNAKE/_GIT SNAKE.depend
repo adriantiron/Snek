@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1484239189 source:g:\codeblocks projects\_facultate\_git snake\main.cpp
+1484251202 source:g:\codeblocks projects\_facultate\_git snake\main.cpp
 	<iostream>
 	<windows.h>
 	<conio.h>
@@ -9,5 +9,17 @@
 	<fstream>
 	"sprites.h"
 
-1484229690 g:\codeblocks projects\_facultate\_git snake\sprites.h
+1484251363 g:\codeblocks projects\_facultate\_git snake\sprites.h
+
+1484258616 source:d:\not fun\code blocks\projects\sne3k\main.cpp
+	<iostream>
+	<windows.h>
+	<conio.h>
+	<time.h>
+	<graphics.h>
+	<stdio.h>
+	<fstream>
+	"sprites.h"
+
+1484260853 d:\not fun\code blocks\projects\sne3k\sprites.h
 

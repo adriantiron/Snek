@@ -67,7 +67,7 @@ void bodySprite(int x , int y)
 }
 
 
-void fruitSprite(int x , int y , int z)
+void fruitSprite(int x , int y , int z , bool b)
 {
      int i , j , a[10][10]={
       0 , 0 , 3 , 3 , 0 , 2 , 2 , 2 , 0 , 0 ,
@@ -83,9 +83,14 @@ void fruitSprite(int x , int y , int z)
       };
     for(i=0; i<10; i++)
         for(j=0; j<10; j++)
-            if(a[i][j]==1)
+            if(a[i][j]==1 && b == false)
             {
                 setfillstyle(SOLID_FILL, RED);
+                bar(x+j,y+i,x+j+1,y+i+1);
+            }
+            else if(a[i][j]==1  && b == true)
+            {
+                setfillstyle(SOLID_FILL, YELLOW);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
             else if(a[i][j]==2)
@@ -93,12 +98,22 @@ void fruitSprite(int x , int y , int z)
                 setfillstyle(SOLID_FILL, BROWN);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
-            else if(a[i][j]==3)
+            else if(a[i][j]==3 && b == false)
             {
                 setfillstyle(SOLID_FILL, LIGHTGREEN);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
-            else if(a[i][j]==4)
+            else if(a[i][j]==3 && b == true)
+            {
+                setfillstyle(SOLID_FILL, WHITE);
+                bar(x+j,y+i,x+j+1,y+i+1);
+            }
+            else if(a[i][j]==4 && b == false)
+            {
+                setfillstyle(SOLID_FILL, LIGHTRED);
+                bar(x+j,y+i,x+j+1,y+i+1);
+            }
+            else if(a[i][j]==4 && b == true)
             {
                 setfillstyle(SOLID_FILL, WHITE);
                 bar(x+j,y+i,x+j+1,y+i+1);
@@ -110,12 +125,12 @@ void fruitSprite(int x , int y , int z)
             }
             else if(a[i][j]==0 && z==2)
             {
-                setfillstyle(SOLID_FILL, BLACK);
+                setfillstyle(SOLID_FILL, WHITE);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
 }
 
-void speedSprite(int x , int y)
+void speedSprite(int x , int y , int z)
 {
       int i , j , a[10][10]={
       0 , 0 , 0 , 0 , 1 , 1 , 0 , 0 , 0 , 0 ,
@@ -136,14 +151,19 @@ void speedSprite(int x , int y)
                 setfillstyle(SOLID_FILL, YELLOW);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
-            else if(a[i][j]==0)
+            else if(a[i][j]==0 && z==1)
             {
                 setfillstyle(SOLID_FILL, DARKGRAY);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
+            else if(a[i][j]==0 && z==2)
+            {
+                setfillstyle(SOLID_FILL, WHITE);
+                bar(x+j,y+i,x+j+1,y+i+1);
+            }
 }
 
-void slowSprite(int x , int y)
+void slowSprite(int x , int y , int z)
 {
     int i , j , a[10][10]={
       1 , 2 , 0 , 0 , 0 , 0 , 0 , 0 , 2 , 1 ,
@@ -169,22 +189,94 @@ void slowSprite(int x , int y)
                 setfillstyle(SOLID_FILL, LIGHTMAGENTA);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
-            else if(a[i][j]==0)
+            else if(a[i][j]==0 && z==1)
             {
                 setfillstyle(SOLID_FILL, DARKGRAY);
+                bar(x+j,y+i,x+j+1,y+i+1);
+            }
+            else if(a[i][j]==0 && z==2)
+            {
+                setfillstyle(SOLID_FILL, WHITE);
                 bar(x+j,y+i,x+j+1,y+i+1);
             }
 }
 
 
-void boostSprite(int x , int y)
+void boostSprite(int x , int y , int z)
 {
 
+      int i , j , a[10][10]={
+      1 , 1 , 0 , 1 , 1 , 0 , 1 , 1 , 1 , 1 ,
+      1 , 1 , 0 , 1 , 1 , 0 , 2 , 2 , 2 , 1 ,
+      2 , 1 , 0 , 1 , 2 , 0 , 0 , 0 , 0 , 1 ,
+      0 , 1 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 1 ,
+      0 , 2 , 1 , 2 , 0 , 0 , 1 , 1 , 1 , 1 ,
+      0 , 0 , 1 , 0 , 0 , 0 , 1 , 2 , 2 , 2 ,
+      0 , 1 , 2 , 1 , 0 , 0 , 1 , 0 , 0 , 0 ,
+      1 , 1 , 0 , 1 , 1 , 0 , 1 , 0 , 0 , 0 ,
+      1 , 1 , 0 , 1 , 1 , 0 , 1 , 1 , 1 , 1 ,
+      2 , 2 , 0 , 2 , 2 , 0 , 2 , 2 , 2 , 2 ,
+      };
+      for(i=0;i<10;i++)
+        for(j=0;j<10;j++)
+        if(a[i][j]==1)
+      {
+          setfillstyle(SOLID_FILL , RED);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
+      else if(a[i][j]==2)
+      {
+          setfillstyle(SOLID_FILL , LIGHTRED);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
+      else if(a[i][j]==0 && z==1)
+      {
+          setfillstyle(SOLID_FILL , DARKGRAY);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
+      else if(a[i][j]==0 && z==2)
+      {
+          setfillstyle(SOLID_FILL , WHITE);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
 }
 
-void halfSprite(int x , int y)
+void halfSprite(int x , int y , int z)
 {
-
+      int i , j , a[10][10]={
+      0 , 0 , 0 , 0 , 2 , 1 , 0 , 0 , 0 , 0 ,
+      0 , 2 , 1 , 0 , 1 , 2 , 0 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 1 , 0 , 0 , 2 , 1 , 2 , 0 ,
+      0 , 0 , 1 , 2 , 1 , 2 , 1 , 2 , 0 , 0 ,
+      2 , 1 , 0 , 1 , 2 , 1 , 2 , 0 , 2 , 1 ,
+      1 , 2 , 0 , 2 , 1 , 2 , 1 , 0 , 1 , 2 ,
+      0 , 0 , 2 , 1 , 2 , 1 , 2 , 1 , 0 , 0 ,
+      0 , 2 , 1 , 2 , 0 , 0 , 1 , 2 , 1 , 0 ,
+      0 , 1 , 2 , 0 , 2 , 1 , 0 , 1 , 2 , 0 ,
+      0 , 0 , 0 , 0 , 1 , 2 , 0 , 0 , 0 , 0 ,
+      };
+      for(i=0;i<10;i++)
+        for(j=0;j<10;j++)
+        if(a[i][j]==1)
+      {
+          setfillstyle(SOLID_FILL , BLUE);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
+      else if(a[i][j]==2)
+      {
+          setfillstyle(SOLID_FILL , CYAN);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
+      else if(a[i][j]==0 && z==1)
+      {
+          setfillstyle(SOLID_FILL , DARKGRAY);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
+      else if(a[i][j]==0 && z==2)
+      {
+          setfillstyle(SOLID_FILL , WHITE);
+          bar(x+j,y+i,x+j+1,y+i+1);
+      }
 }
 
 

@@ -12,7 +12,7 @@ using namespace std;
 
 
 bool gameOver , quitted=false , paused = false , existsSpecial=false;
-bool speedInUse = false , slowInUse = false;
+bool speedInUse = false , slowInUse = false , boostInUse = false , halfInUse = false;
 const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , slowY , lhalfX , lhalfY ;
@@ -51,8 +51,6 @@ void hideCmd()
 
 void dataBoard()
 {
-    setfillstyle(SOLID_FILL ,BLACK);
-    bar(440,60,610,320);
     game_score();
     settextstyle(8 , HORIZ_DIR , 1);
 
@@ -96,7 +94,7 @@ void Setup()
 
 void Draw()
 {
-    setfillstyle(SOLID_FILL , LIGHTGREEN);
+    setfillstyle(SOLID_FILL , GREEN);
     bar(20 , 20 , 420 , 30);
     bar(20 , 30 , 30 , 420);
     bar(30 , 410 , 410 , 420);
@@ -109,11 +107,11 @@ void Draw()
                 headSprite((i+2)*10,(j+2)*10);
 
             else if (i == fruitY && j == fruitX)
-                fruitSprite((i+2)*10,(j+2)*10,1);
+                fruitSprite((i+2)*10,(j+2)*10,1,boostInUse);
 
             else if(i == speedY && j == speedX)
                 {
-                    speedSprite((i+2)*10,(j+2)*10);
+                    speedSprite((i+2)*10,(j+2)*10,1);
 
                     time_t endTime;
                     time (&endTime);
@@ -128,7 +126,7 @@ void Draw()
                 }
              else if(i == slowY && j == slowX)
                 {
-                    slowSprite((i+2)*10,(j+2)*10);
+                    slowSprite((i+2)*10,(j+2)*10,1);
 
                     time_t endTime;
                     time (&endTime);
@@ -136,6 +134,34 @@ void Draw()
                     if (elapsed_secs > 8 && elapsed_secs < 10)
                         {
                             slowX = slowY = 0;
+                            existsSpecial = false;
+                            spawnSpecial();
+                        }
+                }
+            else if(i == boostY && j == boostX)
+                {
+                    boostSprite((i+2)*10,(j+2)*10,1);
+
+                    time_t endTime;
+                    time (&endTime);
+                    double elapsed_secs = difftime (endTime,startTime);
+                    if (elapsed_secs > 8 && elapsed_secs < 10)
+                        {
+                            boostX = boostY = 0;
+                            existsSpecial = false;
+                            spawnSpecial();
+                        }
+                }
+            else if(i == lhalfY && j == lhalfX)
+                {
+                    halfSprite((i+2)*10,(j+2)*10,1);
+
+                    time_t endTime;
+                    time (&endTime);
+                    double elapsed_secs = difftime (endTime,startTime);
+                    if (elapsed_secs > 8 && elapsed_secs < 10)
+                        {
+                            lhalfX = lhalfY = 0;
                             existsSpecial = false;
                             spawnSpecial();
                         }
@@ -206,31 +232,28 @@ void spawnFruit()
 {
     fruitX = rand() % (width-4) + 3;
     fruitY = rand() % (height-4) + 3;
-
     bool isOnTail = true;
     bool isOnHead = true;
-
-    while (isOnTail && isOnHead)
+    while (isOnTail || isOnHead)
         {
             isOnTail = false;
             isOnHead = false;
-
-            for (int i=0; i<nTail; i++)
-                if (tailX[i] == speedX && tailY[i] == speedY)
-                {
-                    fruitX = rand() % (width-4) + 3;
-                    fruitY = rand() % (height-4) + 3;
-                    isOnTail = true;
-                }
-
-
-                if (headX == speedX && headY == speedY)
+            if (headX == speedX && headY == speedY)
                 {
                     fruitX = rand() % (width-4) + 3;
                     speedY = rand() % (height-4) + 3;
                     isOnHead = true;
+                    cout<<"HEAD"<<endl;
                 }
 
+            for (int i=0; i<nTail; i++)
+                while (tailX[i] == speedX && tailY[i] == speedY)
+                {
+                    fruitX = rand() % (width-4) + 3;
+                    fruitY = rand() % (height-4) + 3;
+                    isOnTail = true;
+                    cout<<"BODY"<<endl;
+                }
         }
 }
 
@@ -239,11 +262,11 @@ void spawnSpecial()
    unsigned spec;
    if(existsSpecial==false)
    {
-       spec = rand() % 2 + 1;
+       spec = rand() % 4 + 1;
        if(spec==1) spawnSpeed();
        else if(spec==2) spawnSlow();
-       //else if(spec==3) spawnHalf();
-       //else spawnBoost();
+       else if(spec==3) spawnHalf();
+       else spawnBoost();
        existsSpecial = true;
    }
 
@@ -257,12 +280,26 @@ void spawnSpeed()
 
     bool isOnTail = true;
     bool isOnHead = true;
+    bool isOnFruit = true;
 
-    while (isOnTail && isOnHead)
+    while (isOnTail || isOnHead)
         {
             isOnTail = false;
             isOnHead = false;
+            isOnFruit = false;
 
+            if (fruitX == speedX && fruitY == speedY)
+                {
+                    speedX = rand() % (width-4) + 3;
+                    speedY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+            if (headX == speedX && headY == speedY)
+                {
+                    speedX = rand() % (width-4) + 3;
+                    speedY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == speedX && tailY[i] == speedY)
                 {
@@ -270,15 +307,6 @@ void spawnSpeed()
                     speedY = rand() % (height-4) + 3;
                     isOnTail = true;
                 }
-
-
-                if (headX == speedX && headY == speedY)
-                {
-                    speedX = rand() % (width-4) + 3;
-                    speedY = rand() % (height-4) + 3;
-                    isOnHead = true;
-                }
-
         }
 
     time(&startTime);
@@ -291,12 +319,25 @@ void spawnSlow()
 
     bool isOnTail = true;
     bool isOnHead = true;
+    bool isOnFruit = true;
 
-    while (isOnTail && isOnHead)
+    while (isOnTail || isOnHead)
         {
             isOnTail = false;
             isOnHead = false;
-
+            isOnFruit = false;
+            if (fruitX == speedX && fruitY == speedY)
+                {
+                    slowX = rand() % (width-4) + 3;
+                    slowY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+            if (headX == speedX && headY == speedY)
+                {
+                    slowX = rand() % (width-4) + 3;
+                    slowY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
             for (int i=0; i<nTail; i++)
                 if (tailX[i] == speedX && tailY[i] == speedY)
                 {
@@ -304,15 +345,6 @@ void spawnSlow()
                     slowY = rand() % (height-4) + 3;
                     isOnTail = true;
                 }
-
-
-                if (headX == speedX && headY == speedY)
-                {
-                    slowX = rand() % (width-4) + 3;
-                    slowY = rand() % (height-4) + 3;
-                    isOnHead = true;
-                }
-
         }
 
     time(&startTime);
@@ -320,12 +352,80 @@ void spawnSlow()
 
 void spawnBoost()
 {
+    boostX = rand() % (width-4) + 3;
+    boostY = rand() % (height-4) + 3;
 
+    bool isOnTail = true;
+    bool isOnHead = true;
+    bool isOnFruit = true;
+
+    while (isOnTail || isOnHead)
+        {
+            isOnTail = false;
+            isOnHead = false;
+            isOnFruit = false;
+
+             if (fruitX== boostX && fruitY == boostY)
+                {
+                    boostX  = rand() % (width-4) + 3;
+                    boostY  = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+            if (headX == boostX && headY == boostY)
+                {
+                    boostX  = rand() % (width-4) + 3;
+                    boostY  = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+            for (int i=0; i<nTail; i++)
+                if (tailX[i] == boostX && tailY[i] == boostY)
+                {
+                    boostX  = rand() % (width-4) + 3;
+                    boostY = rand() % (height-4) + 3;
+                    isOnTail = true;
+                }
+        }
+
+    time(&startTime);
 }
 
 void spawnHalf()
 {
+    lhalfX = rand() % (width-4) + 3;
+    lhalfY = rand() % (height-4) + 3;
 
+    bool isOnTail = true;
+    bool isOnHead = true;
+    bool isOnFruit = true;
+
+    while (isOnTail || isOnHead)
+        {
+            isOnTail = false;
+            isOnHead = false;
+            isOnFruit = false;
+
+            if (fruitX == lhalfX && fruitY == lhalfY)
+                {
+                    lhalfX = rand() % (width-4) + 3;
+                    lhalfY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+            if (headX == lhalfX && headY == lhalfY)
+                {
+                    lhalfX = rand() % (width-4) + 3;
+                    lhalfY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+            for (int i=0; i<nTail; i++)
+                if (tailX[i] == lhalfX && tailY[i] == lhalfY)
+                {
+                    lhalfX = rand() % (width-4) + 3;
+                    lhalfY = rand() % (height-4) + 3;
+                    isOnTail = true;
+                }
+        }
+
+    time(&startTime);
 }
 
 void Logic()
@@ -402,7 +502,7 @@ void Logic()
             existsSpecial = false;
             speedInUse = true;
             time (&startTime);
-            movSpeed /= 4;
+            movSpeed = 20;
             speedX = speedY = 0;
          }
     else if (headX == slowX && headY == slowY)
@@ -410,8 +510,30 @@ void Logic()
             existsSpecial = false;
             slowInUse = true;
             time (&startTime);
-            movSpeed *= 2;
+            movSpeed = 160;
             slowX = slowY = 0;
+         }
+    else if (headX == boostX && headY == boostY)
+         {
+            existsSpecial = false;
+            boostInUse = true;
+            time (&startTime);
+            scoreAdd = 20;
+            boostX = boostY = 0;
+         }
+    else if (headX == lhalfX && headY == lhalfY)
+         {
+            existsSpecial = false;
+            halfInUse = true;
+            time (&startTime);
+            if(nTail == 1) game_reset();
+            else
+            {
+                for(int i=nTail/2;i<nTail;i++)
+                    tailX[i]=tailY[i]=0;
+                nTail/=2;
+            }
+            lhalfX = lhalfY = 0;
          }
 
     if (speedInUse)
@@ -424,7 +546,7 @@ void Logic()
         if (elapsed_secs > 12 && elapsed_secs < 14)
         {
             speedInUse = false;
-            movSpeed *= 4;
+            movSpeed = 80;
             spawnSpecial();
         }
     }
@@ -438,7 +560,33 @@ void Logic()
         if (elapsed_secs > 8 && elapsed_secs < 10)
         {
             slowInUse = false;
-            movSpeed /= 2;
+            movSpeed = 80;
+            spawnSpecial();
+        }
+    }
+    else if (boostInUse)
+    {
+
+        time_t endTime;
+        time (&endTime);
+        double elapsed_secs = difftime (endTime,startTime);
+
+        if (elapsed_secs > 18 && elapsed_secs < 20)
+        {
+            boostInUse = false;
+            scoreAdd = 10;
+            spawnSpecial();
+        }
+    }
+     else if (halfInUse)
+    {
+
+        time_t endTime;
+        time (&endTime);
+        double elapsed_secs = difftime (endTime,startTime);
+        if (elapsed_secs > 8 && elapsed_secs < 10)
+        {
+            halfInUse = false;
             spawnSpecial();
         }
     }
@@ -467,7 +615,8 @@ void game_score()
     settextstyle(8 , HORIZ_DIR , 2);
     char arr[50];
     sprintf(arr , "SCORE:%d " , score);
-    setcolor(LIGHTGREEN);
+    setbkcolor(WHITE);
+    setcolor(GREEN);
     outtextxy(460 , 80 , arr);
 }
 
@@ -484,12 +633,37 @@ void singleplayer()
         Logic();
         update_HighScore();
         dataBoard();
-        Sleep(movSpeed); //the SMALLER the movSpeed is the FASTER the snake will go
+        Sleep(movSpeed);
     }
     Sleep(200);
+    setbkcolor(DARKGRAY);
     setcolor(RED);
     settextstyle(4, HORIZ_DIR, 5);
-    outtextxy(60, 165, "YOU DIED!");
+    int mes = rand() % 100 + 1;
+    if(mes>=1 && mes<=49)
+       outtextxy(60, 165, "YOU DIED!");
+    else if(mes>=50 && mes<=95)
+       outtextxy(80, 165, "WASTED");
+    else
+    {
+         setfillstyle(SOLID_FILL ,BLUE);
+         bar(0,0,630,460);
+         setcolor(BLUE);
+         setbkcolor(LIGHTGRAY);
+         settextstyle(4, HORIZ_DIR, 1);
+         outtextxy(260, 100, "Windows");
+         setcolor(WHITE);
+         setbkcolor(BLUE);
+         outtextxy(30, 160, "An error has occurred. To continue:");
+         outtextxy(30, 200, "Press Enter to return to Windows, or");
+         outtextxy(30, 240, "Press CTRL+ALT+DEL to restart your ");
+         outtextxy(30, 260, "computer. If you do this, you will lose any");
+         outtextxy(30, 280, "unsaved information in all open applicatons.");
+         outtextxy(30, 320, "Error 0E  016F  BFF9B3D4");
+         outtextxy(120, 360, "Press any key to continue _");
+
+    }
+
     Sleep(2000);
     menu();
 }
@@ -499,16 +673,16 @@ void menu()
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
     trin=1;
-    setfillstyle(SOLID_FILL , BLACK);
-    bar(100,60,530,400);
-    setfillstyle(SOLID_FILL , LIGHTGREEN);
-    setcolor(LIGHTGREEN);
+    setfillstyle(SOLID_FILL , GREEN);
+    setbkcolor(WHITE);
+    setcolor(GREEN);
     settextstyle(8 , HORIZ_DIR , 4);
     outtextxy(170 , 80 , "SINGLEPLAYER");
     outtextxy(170 ,170 , "MULTIPLAYER");
     outtextxy(170 ,260 , "HELP");
     outtextxy(170 ,350 , "QUIT");
     Sleep(400);
+    speedInUse = slowInUse = boostInUse = halfInUse = false;
     while(quitted!=true)
     {
              if(GetAsyncKeyState('W') && trin>1) trin--;
@@ -519,9 +693,9 @@ void menu()
                  if(trin==3) help();
                  if(trin==4) quitted = true;
              }
-             setfillstyle(SOLID_FILL ,BLACK);
+             setfillstyle(SOLID_FILL ,WHITE);
              bar(140,60,160,400);
-             setfillstyle(SOLID_FILL , LIGHTGREEN);
+             setfillstyle(SOLID_FILL , GREEN);
              bar(140,trin*90,160,trin*90+10);
              Sleep(100);
 
@@ -537,9 +711,8 @@ void help()
 {
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
-    setfillstyle(SOLID_FILL , BLACK);
-    bar(100,60,530,400);
-    setcolor(LIGHTGREEN);
+    setbkcolor(WHITE);
+    setcolor(GREEN);
     settextstyle(8 , HORIZ_DIR , 2);
     outtextxy(110 , 80 , "Use W-A-S-D to move in the menu ");
     outtextxy(110 , 100 , "and in the game.Press E to select.");
@@ -574,21 +747,24 @@ void powersMenu()
     bool inPowerMenu = true;
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
-    setfillstyle(SOLID_FILL , BLACK);
-    bar(100,60,530,400);
-    setcolor(LIGHTGREEN);
+    setbkcolor(WHITE);
+    setcolor(GREEN);
     settextstyle(8 , HORIZ_DIR , 1);
     outtextxy(110 , 80 , "            POWER-UPS");
-    fruitSprite(110 , 125 , 2);
+    fruitSprite(110 , 125 , 2 , false);
     outtextxy(130 , 120 , "- fruit");
     outtextxy(110 , 135 , "Gives one point when eaten and adds");
     outtextxy(110 , 150 , "one to the length of the snake.");
+    speedSprite(110 , 175 , 2);
     outtextxy(130 , 170 , "- speed");
     outtextxy(110 , 185 , "Doubles the speed of the snake.");
+    slowSprite(110 ,210 , 2);
     outtextxy(130 , 205 , "- slow");
     outtextxy(110 , 220 , "Halves the speed of the snake.");
+    halfSprite(110 , 245 , 2);
     outtextxy(130 , 240 , "- cut");
     outtextxy(110 , 255 , "Halves the size of the snake.");
+    boostSprite(110 , 280 , 2);
     outtextxy(130 , 275 , "- boost");
     outtextxy(110 , 290 , "Doubles the points you get when eating");
     outtextxy(110 , 305 , "a fruit.");
