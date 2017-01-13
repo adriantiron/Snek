@@ -954,6 +954,10 @@ void menu()
     outtextxy(170 ,170 , "MULTIPLAYER");
     outtextxy(170 ,260 , "HELP");
     outtextxy(170 ,350 , "QUIT");
+    line(0,300,100,0);
+    line(500,460,640,0);
+    floodfill(1 ,1 , BLUE);
+    floodfill(600, 420 , BLUE);
     Sleep(400);
     botHeadX = botHeadY = 0;
     speedInUse = slowInUse = boostInUse = halfInUse = false;
@@ -1007,7 +1011,7 @@ void multiplayer()
     int mes = rand() % 100 + 1;
     if(mes>=1 && mes<=49)
        outtextxy(60, 165, "YOU DIED!");
-    else if(mes>=50 && mes<=90)
+    else if(mes>=50 && mes<=85)
        outtextxy(80, 165, "WASTED");
     else
     {
@@ -1108,7 +1112,7 @@ void powersMenu()
 
 int main()
 {
-    // hideCmd();
+    hideCmd();
     game_window();
     bar(0,0,630,460);
     setfillstyle(SOLID_FILL , LIGHTBLUE);
@@ -1116,6 +1120,11 @@ int main()
     outtextxy(200 ,160 , "T&T");
     floodfill(202 ,190 , WHITE);
     floodfill(320 ,240 , WHITE);
+    setbkcolor(WHITE);
+    setcolor(BLUE);
+    settextstyle(8 , HORIZ_DIR , 1);
+    outtextxy(40 , 420 , "Adrian Tiron");
+    outtextxy(420 ,420 , "Teodor Tanase");
     Sleep(3000);
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
@@ -1132,9 +1141,7 @@ int main()
         highScore = score;
     fout<<highScore;
     fout.close();
-
-
     system("exit");
-
     exit(0);
+    return 0;
 }
