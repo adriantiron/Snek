@@ -11,7 +11,7 @@
 using namespace std;
 
 
-bool gameOver , quitted=false , paused = false , existsSpecial=false;
+bool gameOver , quitted=false , existsSpecial=false;
 bool speedInUse = false , slowInUse = false , boostInUse = false , halfInUse = false;
 const int height = 40;
 const int width = 40;
@@ -19,7 +19,7 @@ int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , sl
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
 eDirection dir;
 int nTail, tailX[100], tailY[100];
-int trin=1 , scoreAdd=1 , movSpeed=80 ;
+int trin=1 , scoreAdd , movSpeed;
 unsigned int highScore;
 time_t startTime;
 
@@ -66,17 +66,6 @@ void dataBoard()
     outtextxy(460 , 280 , "RESUME - O");
 }
 
-void powersInit()
-{
-    speedX = rand() % (width-4) + 3;
-    speedY = rand() % (height-4) + 3;
-    slowX = rand() % (width-4) + 3;
-    slowY = rand() % (height-4) + 3;
-    lhalfX = rand() % (width-4) + 3;
-    lhalfY = rand() % (height-4) + 3;
-    boostX = rand() % (width-4) + 3;
-    boostY = rand() % (height-4) + 3;
-}
 
 void Setup()
 {
@@ -89,7 +78,9 @@ void Setup()
     fruitY = rand() % (height-4) + 3;
     score = 0;
     scoreAdd = 10;
-
+    existsSpecial = speedInUse = slowInUse = boostInUse = halfInUse = false;
+    speedX = speedY = slowX = slowY = boostX = boostY = lhalfX = lhalfY = 0;
+    movSpeed = 80;
 }
 
 void Draw()
@@ -243,7 +234,6 @@ void spawnFruit()
                     fruitX = rand() % (width-4) + 3;
                     speedY = rand() % (height-4) + 3;
                     isOnHead = true;
-                    cout<<"HEAD"<<endl;
                 }
 
             for (int i=0; i<nTail; i++)
@@ -252,7 +242,6 @@ void spawnFruit()
                     fruitX = rand() % (width-4) + 3;
                     fruitY = rand() % (height-4) + 3;
                     isOnTail = true;
-                    cout<<"BODY"<<endl;
                 }
         }
 }
@@ -631,7 +620,6 @@ void singleplayer()
         Draw();
         Input();
         Logic();
-        update_HighScore();
         dataBoard();
         Sleep(movSpeed);
     }
@@ -670,6 +658,7 @@ void singleplayer()
 
 void menu()
 {
+    update_HighScore();
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
     trin=1;
@@ -783,6 +772,7 @@ void powersMenu()
 
 int main()
 {
+    hideCmd();
     game_window();
     bar(0,0,630,460);
     setfillstyle(SOLID_FILL , LIGHTGREEN);
@@ -807,5 +797,8 @@ int main()
     fout<<highScore;
     fout.close();
 
-    return 0;
+
+    system("exit");
+
+    exit(0);
 }
