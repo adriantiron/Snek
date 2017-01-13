@@ -58,11 +58,23 @@ void dataBoard()
 
     char arr[50];
     sprintf(arr, "%d", highScore);
-
     outtextxy(460 , 120 , "KING:");
     outtextxy(520 , 120 , arr);
-    setfillstyle(SOLID_FILL ,WHITE);
-    bar(430,160,620,180);
+    outtextxy(460 , 200 , "EXIT  - Q");
+    outtextxy(460 , 240 , "PAUSE - P");
+    outtextxy(460 , 280 , "RESUME - O");
+}
+
+void multiDataBoard()
+{
+    settextstyle(8 , HORIZ_DIR , 1);
+    char arr1[10] , arr2[10];
+    sprintf(arr1, "%d", score);
+    outtextxy(460 , 80 , "BLUE:");
+    outtextxy(520 , 80 , arr1);
+    sprintf(arr2, "%d", botScore);
+    outtextxy(460 , 120 , "RED:");
+    outtextxy(520 , 120 , arr2);
     outtextxy(460 , 200 , "EXIT  - Q");
     outtextxy(460 , 240 , "PAUSE - P");
     outtextxy(460 , 280 , "RESUME - O");
@@ -107,7 +119,7 @@ void multiSetup()
 
 void Draw()
 {
-    setfillstyle(SOLID_FILL , GREEN);
+    setfillstyle(SOLID_FILL , BLUE);
     bar(20 , 20 , 420 , 30);
     bar(20 , 30 , 30 , 420);
     bar(30 , 410 , 410 , 420);
@@ -416,7 +428,11 @@ void botLogic()
 
     if ( botHeadX >= width-1 || botHeadX < 1 || botHeadY >= height-1 || botHeadY < 1)
         gameOver = true;
-
+    for (int i=0; i<nTail; i++)
+        if(tailX[i] == botHeadX && tailY[i] == botHeadY) gameOver = true;;
+    for (int i=0; i<botNTail; i++)
+        if(botTailX[i] == botHeadX && botTailY[i] == botHeadY) gameOver = true;;
+    if (botHeadX == headX && botHeadY  == headY) gameOver = true;
     for (int i=0; i<botNTail; i++)
         if (botTailX[i] == botHeadX && botTailY[i] == botHeadY)
             gameOver = true;
@@ -683,6 +699,10 @@ void Logic()
     for (int i=0; i<nTail; i++)
         if (tailX[i] == headX && tailY[i] == headY)
             gameOver = true;
+    for (int i=0; i<botNTail; i++)
+        if (botTailX[i] == headX && botTailY[i] == headY)
+            gameOver = true;
+
 
     if (headX == fruitX && headY == fruitY)
     {
@@ -819,7 +839,7 @@ void game_score()
     char arr[50];
     sprintf(arr , "SCORE:%d " , score);
     setbkcolor(WHITE);
-    setcolor(GREEN);
+    setcolor(BLUE);
     outtextxy(460 , 80 , arr);
 }
 
@@ -829,6 +849,7 @@ void singleplayer()
     Setup();
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
+    menuSnakeSprite(485,0,1);
     while (!gameOver)
     {
         Draw();
@@ -844,7 +865,7 @@ void singleplayer()
     int mes = rand() % 100 + 1;
     if(mes>=1 && mes<=49)
        outtextxy(60, 165, "YOU DIED!");
-    else if(mes>=50 && mes<=95)
+    else if(mes>=50 && mes<=92)
        outtextxy(80, 165, "WASTED");
     else
     {
@@ -863,7 +884,6 @@ void singleplayer()
          outtextxy(30, 280, "unsaved information in all open applicatons.");
          outtextxy(30, 320, "Error 0E  016F  BFF9B3D4");
          outtextxy(120, 360, "Press any key to continue _");
-
     }
     Sleep(2000);
     menu();
@@ -875,10 +895,10 @@ void menu()
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
     trin=1;
-    setfillstyle(SOLID_FILL , GREEN);
+    setfillstyle(SOLID_FILL , BLUE);
     setbkcolor(WHITE);
-    setcolor(GREEN);
-    settextstyle(8 , HORIZ_DIR , 4);
+    setcolor(BLUE);
+    settextstyle(BOLD_FONT , HORIZ_DIR , 4);
     outtextxy(170 , 80 , "SINGLEPLAYER");
     outtextxy(170 ,170 , "MULTIPLAYER");
     outtextxy(170 ,260 , "HELP");
@@ -900,7 +920,7 @@ void menu()
              }
              setfillstyle(SOLID_FILL ,WHITE);
              bar(140,60,160,400);
-             setfillstyle(SOLID_FILL , GREEN);
+             setfillstyle(SOLID_FILL , BLUE);
              bar(140,trin*90,160,trin*90+10);
              Sleep(100);
 
@@ -914,6 +934,8 @@ void multiplayer()
     multiSetup();
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
+    menuSnakeSprite(455,0,1);
+    menuSnakeSprite(530,0,2);
     while (!gameOver)
     {
         Draw();
@@ -924,7 +946,7 @@ void multiplayer()
             botBrain();
             botLogic();
         }
-        dataBoard();
+        multiDataBoard();
         Sleep(movSpeed);
     }
     Sleep(200);
@@ -934,7 +956,7 @@ void multiplayer()
     int mes = rand() % 100 + 1;
     if(mes>=1 && mes<=49)
        outtextxy(60, 165, "YOU DIED!");
-    else if(mes>=50 && mes<=95)
+    else if(mes>=50 && mes<=90)
        outtextxy(80, 165, "WASTED");
     else
     {
@@ -953,9 +975,6 @@ void multiplayer()
          outtextxy(30, 280, "unsaved information in all open applicatons.");
          outtextxy(30, 320, "Error 0E  016F  BFF9B3D4");
          outtextxy(120, 360, "Press any key to continue _");
-
-
-
     }
 
     Sleep(2000);
@@ -967,7 +986,7 @@ void help()
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
     setbkcolor(WHITE);
-    setcolor(GREEN);
+    setcolor(BLUE);
     settextstyle(8 , HORIZ_DIR , 2);
     outtextxy(110 , 80 , "Use W-A-S-D to move in the menu ");
     outtextxy(110 , 100 , "and in the game.Press E to select.");
@@ -1003,7 +1022,7 @@ void powersMenu()
     setfillstyle(SOLID_FILL ,WHITE);
     bar(0,0,630,460);
     setbkcolor(WHITE);
-    setcolor(GREEN);
+    setcolor(BLUE);
     settextstyle(8 , HORIZ_DIR , 1);
     outtextxy(110 , 80 , "            POWER-UPS");
     fruitSprite(110 , 125 , 2 , false);
@@ -1041,7 +1060,7 @@ int main()
     // hideCmd();
     game_window();
     bar(0,0,630,460);
-    setfillstyle(SOLID_FILL , LIGHTGREEN);
+    setfillstyle(SOLID_FILL , LIGHTBLUE);
     settextstyle(8 , HORIZ_DIR , 10);
     outtextxy(200 ,160 , "T&T");
     floodfill(202 ,190 , WHITE);
