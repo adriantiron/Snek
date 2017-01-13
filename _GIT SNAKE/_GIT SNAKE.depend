@@ -23,3 +23,15 @@
 
 1484260853 d:\not fun\code blocks\projects\sne3k\sprites.h
 
+1484317251 source:d:\not fun\code blocks\projects\snek-master\_git snake\main.cpp
+	<iostream>
+	<windows.h>
+	<conio.h>
+	<time.h>
+	<graphics.h>
+	<stdio.h>
+	<fstream>
+	"sprites.h"
+
+1484317474 d:\not fun\code blocks\projects\snek-master\_git snake\sprites.h
+

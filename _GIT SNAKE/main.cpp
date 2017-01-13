@@ -11,13 +11,14 @@
 using namespace std;
 
 
-bool gameOver , quitted=false , existsSpecial=false;
+bool gameOver , quitted=false , existsSpecial=false , playerStarted = false;
 bool speedInUse = false , slowInUse = false , boostInUse = false , halfInUse = false;
 const int height = 40;
 const int width = 40;
 int headX, headY, fruitX, fruitY, score , speedX , speedY , boostX , boostY , slowX , slowY , lhalfX , lhalfY ;
+int botHeadX, botHeadY , botNTail , botTailX[100] , botTailY[100] , botScore;
 enum eDirection { STOP, UP, DOWN, LEFT, RIGHT };
-eDirection dir;
+eDirection dir , botDir;
 int nTail, tailX[100], tailY[100];
 int trin=1 , scoreAdd , movSpeed;
 unsigned int highScore;
@@ -37,6 +38,7 @@ void spawnSpeed();
 void spawnSlow();
 void spawnBoost();
 void spawnHalf();
+int botColision(eDirection);
 
 
 
@@ -83,6 +85,26 @@ void Setup()
     movSpeed = 80;
 }
 
+void multiSetup()
+{
+    gameOver = false;
+    dir = STOP;
+    botDir = STOP;
+    headX = width / 4;
+    headY = height/ 4;
+    botHeadX = (width / 4) * 3;
+    botHeadY = (height/ 4) * 3;
+    srand(time(NULL));
+    fruitX = rand() % (width-4) + 3;
+    fruitY = rand() % (height-4) + 3;
+    score = 0;
+    botScore = 0;
+    scoreAdd = 10;
+    existsSpecial = true;
+    speedX = speedY = slowX = slowY = boostX = boostY = lhalfX = lhalfY = 0;
+    movSpeed = 80;
+}
+
 void Draw()
 {
     setfillstyle(SOLID_FILL , GREEN);
@@ -96,6 +118,9 @@ void Draw()
         {
             if (i == headY && j == headX)
                 headSprite((i+2)*10,(j+2)*10);
+
+            else if(i == botHeadY && j == botHeadX)
+                botHeadSprite((i+2)*10,(j+2)*10);
 
             else if (i == fruitY && j == fruitX)
                 fruitSprite((i+2)*10,(j+2)*10,1,boostInUse);
@@ -165,15 +190,25 @@ void Draw()
                     if (tailX[k] == j && tailY[k] == i)
                     {
                         bodySprite((i+2)*10,(j+2)*10);
+                        bodySprite((i+2)*10,(j+2)*10);
                         tailDisplayed = true;
                     }
                 }
-                if (!tailDisplayed && j<=width-2 && i<=height-2)
+                bool botTailDisplayed = false;
+                for (int k = 0; k < botNTail; k++)
+                {
+                    if (botTailX[k] == j && botTailY[k] == i)
+                    {
+                        botBodySprite((i+2)*10,(j+2)*10);
+                        botTailDisplayed = true;
+                    }
+                }
+
+                if (!tailDisplayed && !botTailDisplayed && j<=width-2 && i<=height-2)
                     {
                         setfillstyle(SOLID_FILL , DARKGRAY);
                         bar((i+2)*10 , (j+2)*10 , (i+2)*10+10, (j+2)*10+10);
                     }
-
             }
         }
     }
@@ -184,21 +219,25 @@ void Input()
 
         if(GetAsyncKeyState('A'))
         {
+            playerStarted = true;
             if (dir != DOWN)
                 dir = UP;
         }
         else if(GetAsyncKeyState('W'))
         {
+            playerStarted = true;
             if (dir != RIGHT)
                 dir = LEFT;
         }
         else if(GetAsyncKeyState('D'))
         {
+            playerStarted = true;
             if (dir != UP)
                 dir = DOWN;
         }
         else if(GetAsyncKeyState('S'))
         {
+            playerStarted = true;
             if (dir != LEFT)
                 dir = RIGHT;
         }
@@ -208,15 +247,188 @@ void Input()
              game_reset();
         }
         else if(GetAsyncKeyState('P'))
-            {
+        {
                while (true)
                {
                    if (GetAsyncKeyState('O'))
                         break;
                }
+        }
 
+}
 
+void botBrain()
+{
+        if(botDir == STOP)
+        {
+          if(fruitX > botHeadX) botDir = RIGHT;
+          else if (fruitX < botHeadX) botDir = LEFT;
+          else if (fruitY < botHeadY) botDir = UP;
+          else if (fruitY > botHeadY) botDir = DOWN;
+        }
+        if(fruitX > botHeadX && botDir != RIGHT)
+        {
+            if(botDir == UP)
+            {
+                if(botColision(RIGHT)==0) botDir = RIGHT;
             }
+            else if(botDir == DOWN)
+            {
+                if(botColision(RIGHT)==0) botDir = RIGHT;
+            }
+            else if(botDir == LEFT)
+            {
+                if(botColision(UP)==0) botDir = UP;
+                else if(botColision(DOWN)==0) botDir = DOWN;
+            }
+        }
+        else if(fruitX < botHeadX && botDir != LEFT)
+        {
+            if(botDir == UP)
+            {
+                if(botColision(LEFT)==0) botDir = LEFT;
+            }
+            else if(botDir == DOWN)
+            {
+                if(botColision(LEFT)==0) botDir = LEFT;
+            }
+            else if(botDir == RIGHT)
+            {
+                if(botColision(UP)==0) botDir = UP;
+                else if(botColision(DOWN)==0) botDir = DOWN;
+            }
+        }
+        else if(fruitY > botHeadY && botDir != DOWN)
+        {
+            if(botDir == RIGHT)
+            {
+                if(botColision(DOWN)==0) botDir = DOWN;
+            }
+            else if(botDir == LEFT)
+            {
+                if(botColision(DOWN)==0) botDir = DOWN;
+            }
+            else if(botDir == UP)
+            {
+                if(botColision(LEFT)==0) botDir = LEFT;
+                else if(botColision(RIGHT)==0) botDir = RIGHT;
+            }
+        }
+        else if(fruitY < botHeadY && botDir != UP)
+        {
+            if(botDir == RIGHT)
+            {
+                if(botColision(UP)==0) botDir = UP;
+            }
+            else if(botDir == LEFT)
+            {
+                if(botColision(UP)==0) botDir = UP;
+            }
+            else if(botDir == DOWN)
+            {
+                if(botColision(LEFT)==0) botDir = LEFT;
+                else if(botColision(RIGHT)==0) botDir = RIGHT;
+            }
+        }
+
+}
+
+int botColision(eDirection tempDir)
+{
+      if(tempDir == UP)
+      {
+          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY - 1) return 1;
+          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY - 1) return 2;
+          if (botHeadX == headX && botHeadY - 1 == headY + 1) return 3;
+          if (botHeadY - 1 >= height-1) return 4;
+      }
+      else if(tempDir == RIGHT)
+      {
+          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX + 1 && tailY[i] == botHeadY) return 1;
+          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX + 1 && botTailY[i] == botHeadY) return 2;
+          if (botHeadX + 1 == headX - 1 && botHeadY == headY) return 3;
+          if (botHeadX + 1 >= width-1) return 4;
+      }
+      else if(tempDir == LEFT)
+      {
+          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX - 1 && tailY[i] == botHeadY) return 1;
+          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX - 1 && botTailY[i] == botHeadY) return 2;
+          if (botHeadX - 1 == headX + 1 && botHeadY == headY) return 3;
+          if (botHeadX - 1 < 1) return 4;
+      }
+      if(tempDir == DOWN)
+      {
+          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY + 1) return 1;
+          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY + 1) return 2;
+          if (botHeadX == headX && botHeadY + 1 == headY - 1) return 3;
+          if (botHeadY + 1 < 1) return 4;
+      }
+      return 0;
+}
+
+void botLogic()
+{
+    int botPrevX = botTailX[0];
+    int botPrevY = botTailY[0];
+    int botPrev2X, botPrev2Y;
+
+    botTailX[0] = botHeadX;
+    botTailY[0] = botHeadY;
+
+    for (int i=1; i< botNTail; i++)
+    {
+        botPrev2X = botTailX[i];
+        botPrev2Y = botTailY[i];
+
+        botTailX[i] = botPrevX;
+        botTailY[i] = botPrevY;
+
+        botPrevX = botPrev2X;
+        botPrevY = botPrev2Y;
+    }
+
+    switch (botDir)
+    {
+    case UP:
+    {
+        botHeadY--;
+        break;
+    }
+    case LEFT:
+    {
+        botHeadX--;
+        break;
+    }
+    case DOWN:
+    {
+        botHeadY++;
+        break;
+    }
+    case RIGHT:
+    {
+        botHeadX++;
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    if ( botHeadX >= width-1 || botHeadX < 1 || botHeadY >= height-1 || botHeadY < 1)
+        gameOver = true;
+
+    for (int i=0; i<botNTail; i++)
+        if (botTailX[i] == botHeadX && botTailY[i] == botHeadY)
+            gameOver = true;
+
+    if (botHeadX == fruitX && botHeadY == fruitY)
+    {
+        botScore += scoreAdd;
+
+        spawnFruit();
+
+        botNTail++;
+    }
 }
 
 void spawnFruit()
@@ -590,7 +802,9 @@ void game_reset()
 {
     for (int i=0; i<nTail; i++)
         tailX[i] = tailY[i] = 0;
-    nTail = 0;
+    for (int i=0; i<botNTail; i++)
+        botTailX[i] = botTailY[i] = 0;
+    nTail = botNTail = 0;
 }
 
 
@@ -651,7 +865,6 @@ void singleplayer()
          outtextxy(120, 360, "Press any key to continue _");
 
     }
-
     Sleep(2000);
     menu();
 }
@@ -671,14 +884,17 @@ void menu()
     outtextxy(170 ,260 , "HELP");
     outtextxy(170 ,350 , "QUIT");
     Sleep(400);
+    botHeadX = botHeadY = 0;
     speedInUse = slowInUse = boostInUse = halfInUse = false;
     while(quitted!=true)
     {
+
              if(GetAsyncKeyState('W') && trin>1) trin--;
              else if(GetAsyncKeyState('S') && trin<4) trin++;
              else if(GetAsyncKeyState('E'))
              {
                  if(trin==1) singleplayer();
+                 if(trin==2) multiplayer();
                  if(trin==3) help();
                  if(trin==4) quitted = true;
              }
@@ -693,7 +909,57 @@ void menu()
 
 void multiplayer()
 {
+    playerStarted = false;
+    game_reset();
+    multiSetup();
+    setfillstyle(SOLID_FILL ,WHITE);
+    bar(0,0,630,460);
+    while (!gameOver)
+    {
+        Draw();
+        Input();
+        Logic();
+        if(playerStarted)
+        {
+            botBrain();
+            botLogic();
+        }
+        dataBoard();
+        Sleep(movSpeed);
+    }
+    Sleep(200);
+    setbkcolor(DARKGRAY);
+    setcolor(RED);
+    settextstyle(4, HORIZ_DIR, 5);
+    int mes = rand() % 100 + 1;
+    if(mes>=1 && mes<=49)
+       outtextxy(60, 165, "YOU DIED!");
+    else if(mes>=50 && mes<=95)
+       outtextxy(80, 165, "WASTED");
+    else
+    {
+         setfillstyle(SOLID_FILL ,BLUE);
+         bar(0,0,630,460);
+         setcolor(BLUE);
+         setbkcolor(LIGHTGRAY);
+         settextstyle(4, HORIZ_DIR, 1);
+         outtextxy(260, 100, "Windows");
+         setcolor(WHITE);
+         setbkcolor(BLUE);
+         outtextxy(30, 160, "An error has occurred. To continue:");
+         outtextxy(30, 200, "Press Enter to return to Windows, or");
+         outtextxy(30, 240, "Press CTRL+ALT+DEL to restart your ");
+         outtextxy(30, 260, "computer. If you do this, you will lose any");
+         outtextxy(30, 280, "unsaved information in all open applicatons.");
+         outtextxy(30, 320, "Error 0E  016F  BFF9B3D4");
+         outtextxy(120, 360, "Press any key to continue _");
 
+
+
+    }
+
+    Sleep(2000);
+    menu();
 }
 
 void help()
@@ -772,7 +1038,7 @@ void powersMenu()
 
 int main()
 {
-    hideCmd();
+    // hideCmd();
     game_window();
     bar(0,0,630,460);
     setfillstyle(SOLID_FILL , LIGHTGREEN);
