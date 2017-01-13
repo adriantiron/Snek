@@ -104,8 +104,8 @@ void multiSetup()
     botDir = STOP;
     headX = width / 4;
     headY = height/ 4;
-    botHeadX = (width / 4) * 3;
-    botHeadY = (height/ 4) * 3;
+    botHeadY = (width / 4) * 3;
+    botHeadX = (height/ 4) * 3;
     srand(time(NULL));
     fruitX = rand() % (width-4) + 3;
     fruitY = rand() % (height-4) + 3;
@@ -272,110 +272,144 @@ void Input()
 void botBrain()
 {
         if(botDir == STOP)
-        {
-          if(fruitX > botHeadX) botDir = RIGHT;
-          else if (fruitX < botHeadX) botDir = LEFT;
-          else if (fruitY < botHeadY) botDir = UP;
-          else if (fruitY > botHeadY) botDir = DOWN;
-        }
-        if(fruitX > botHeadX && botDir != RIGHT)
-        {
-            if(botDir == UP)
-            {
-                if(botColision(RIGHT)==0) botDir = RIGHT;
-            }
-            else if(botDir == DOWN)
-            {
-                if(botColision(RIGHT)==0) botDir = RIGHT;
-            }
-            else if(botDir == LEFT)
-            {
-                if(botColision(UP)==0) botDir = UP;
-                else if(botColision(DOWN)==0) botDir = DOWN;
-            }
-        }
-        else if(fruitX < botHeadX && botDir != LEFT)
-        {
-            if(botDir == UP)
-            {
-                if(botColision(LEFT)==0) botDir = LEFT;
-            }
-            else if(botDir == DOWN)
-            {
-                if(botColision(LEFT)==0) botDir = LEFT;
-            }
-            else if(botDir == RIGHT)
-            {
-                if(botColision(UP)==0) botDir = UP;
-                else if(botColision(DOWN)==0) botDir = DOWN;
-            }
-        }
-        else if(fruitY > botHeadY && botDir != DOWN)
-        {
-            if(botDir == RIGHT)
-            {
-                if(botColision(DOWN)==0) botDir = DOWN;
-            }
-            else if(botDir == LEFT)
-            {
-                if(botColision(DOWN)==0) botDir = DOWN;
-            }
-            else if(botDir == UP)
-            {
-                if(botColision(LEFT)==0) botDir = LEFT;
-                else if(botColision(RIGHT)==0) botDir = RIGHT;
-            }
-        }
-        else if(fruitY < botHeadY && botDir != UP)
-        {
-            if(botDir == RIGHT)
-            {
-                if(botColision(UP)==0) botDir = UP;
-            }
-            else if(botDir == LEFT)
-            {
-                if(botColision(UP)==0) botDir = UP;
-            }
-            else if(botDir == DOWN)
-            {
-                if(botColision(LEFT)==0) botDir = LEFT;
-                else if(botColision(RIGHT)==0) botDir = RIGHT;
-            }
-        }
+         {
+           if(fruitX > botHeadX) botDir = RIGHT;
+           else if (fruitX < botHeadX) botDir = LEFT;
+           else if (fruitY < botHeadY) botDir = UP;
+           else if (fruitY > botHeadY) botDir = DOWN;
+         }
+         if(fruitX > botHeadX && botDir != RIGHT)
+         {
+             if(botDir == UP)
+             {
+                 if(botColision(RIGHT)==0) botDir = RIGHT;
+             }
+             else if(botDir == DOWN)
+             {
+                 if(botColision(RIGHT)==0) botDir = RIGHT;
+             }
+             else if(botDir == LEFT)
+             {
+                 if(botColision(UP)==0) botDir = UP;
+                 else if(botColision(DOWN)==0) botDir = DOWN;
+             }
+         }
+         else if(fruitX < botHeadX && botDir != LEFT)
+         {
+             if(botDir == UP)
+             {
+                 if(botColision(LEFT)==0) botDir = LEFT;
+             }
+             else if(botDir == DOWN)
+             {
+                 if(botColision(LEFT)==0) botDir = LEFT;
+             }
+             else if(botDir == RIGHT)
+             {
+                 if(botColision(UP)==0) botDir = UP;
+                 else if(botColision(DOWN)==0) botDir = DOWN;
+             }
+         }
+         else if(fruitY > botHeadY && botDir != DOWN)
+         {
+             if(botDir == RIGHT)
+             {
+                 if(botColision(DOWN)==0) botDir = DOWN;
+             }
+             else if(botDir == LEFT)
+             {
+                 if(botColision(DOWN)==0) botDir = DOWN;
+             }
+             else if(botDir == UP)
+             {
+                 if(botColision(LEFT)==0) botDir = LEFT;
+                 else if(botColision(RIGHT)==0) botDir = RIGHT;
+             }
+         }
+         else if(fruitY < botHeadY && botDir != UP)
+         {
+             if(botDir == RIGHT)
+             {
+                 if(botColision(UP)==0) botDir = UP;
+             }
+             else if(botDir == LEFT)
+             {
+                 if(botColision(UP)==0) botDir = UP;
+             }
+             else if(botDir == DOWN)
+             {
+                 if(botColision(LEFT)==0) botDir = LEFT;
+                 else if(botColision(RIGHT)==0) botDir = RIGHT;
+             }
+         }
+         int chances;
+         for(chances=1;chances<=4;chances++)
+         {
+
+         if(botDir == UP)
+         {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY - 1) botDir=LEFT;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY - 1) botDir=LEFT;
+           if (botHeadX == headX && botHeadY - 1 == headY + 1) botDir=LEFT;
+           if (botHeadY - 1 >= height-1) botDir=LEFT;
+         }
+         if(botDir == LEFT)
+         {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX - 1 && tailY[i] == botHeadY) botDir = DOWN;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX - 1 && botTailY[i] == botHeadY) botDir = DOWN;
+           if (botHeadX - 1 == headX + 1 && botHeadY == headY) botDir = DOWN;
+           if (botHeadX - 1 < 1) botDir = DOWN;
+         }
+         if(botDir == DOWN)
+         {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY + 1) botDir = RIGHT;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY + 1) botDir = RIGHT;
+           if (botHeadX == headX && botHeadY + 1 == headY - 1) botDir = RIGHT;
+           if (botHeadY + 1 < 1) botDir = RIGHT;
+         }
+         if(botDir == RIGHT)
+         {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX + 1 && tailY[i] == botHeadY) botDir = UP;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX + 1 && botTailY[i] == botHeadY) botDir = UP;
+           if (botHeadX + 1 == headX - 1 && botHeadY == headY) botDir = UP;
+           if (botHeadX + 1 >= width-1) botDir = UP;
+         }
+
+         }
 
 }
 
 int botColision(eDirection tempDir)
 {
-      if(tempDir == UP)
-      {
-          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY - 1) return 1;
-          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY - 1) return 2;
-          if (botHeadX == headX && botHeadY - 1 == headY + 1) return 3;
-          if (botHeadY - 1 >= height-1) return 4;
-      }
-      else if(tempDir == RIGHT)
-      {
-          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX + 1 && tailY[i] == botHeadY) return 1;
-          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX + 1 && botTailY[i] == botHeadY) return 2;
-          if (botHeadX + 1 == headX - 1 && botHeadY == headY) return 3;
-          if (botHeadX + 1 >= width-1) return 4;
-      }
-      else if(tempDir == LEFT)
-      {
-          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX - 1 && tailY[i] == botHeadY) return 1;
-          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX - 1 && botTailY[i] == botHeadY) return 2;
-          if (botHeadX - 1 == headX + 1 && botHeadY == headY) return 3;
-          if (botHeadX - 1 < 1) return 4;
-      }
-      if(tempDir == DOWN)
-      {
-          for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY + 1) return 1;
-          for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY + 1) return 2;
-          if (botHeadX == headX && botHeadY + 1 == headY - 1) return 3;
-          if (botHeadY + 1 < 1) return 4;
-      }
-      return 0;
+       if(tempDir == UP)
+       {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY - 1) return 1;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY - 1) return 2;
+           if (botHeadX == headX && botHeadY - 1 == headY + 1) return 3;
+           if (botHeadY - 1 >= height-1) return 4;
+       }
+       else if(tempDir == RIGHT)
+       {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX + 1 && tailY[i] == botHeadY) return 1;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX + 1 && botTailY[i] == botHeadY) return 2;
+           if (botHeadX + 1 == headX - 1 && botHeadY == headY) return 3;
+           if (botHeadX + 1 >= width-1) return 4;
+       }
+       else if(tempDir == LEFT)
+       {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX - 1 && tailY[i] == botHeadY) return 1;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX - 1 && botTailY[i] == botHeadY) return 2;
+           if (botHeadX - 1 == headX + 1 && botHeadY == headY) return 3;
+           if (botHeadX - 1 < 1) return 4;
+       }
+       if(tempDir == DOWN)
+       {
+           for (int i=0; i<nTail; i++) if(tailX[i] == botHeadX && tailY[i] == botHeadY + 1) return 1;
+           for (int i=0; i<botNTail; i++) if(botTailX[i] == botHeadX && botTailY[i] == botHeadY + 1) return 2;
+           if (botHeadX == headX && botHeadY + 1 == headY - 1) return 3;
+           if (botHeadY + 1 < 1) return 4;
+       }
+       return 0;
 }
 
 void botLogic()
@@ -453,19 +487,36 @@ void spawnFruit()
     fruitY = rand() % (height-4) + 3;
     bool isOnTail = true;
     bool isOnHead = true;
-    while (isOnTail || isOnHead)
+    bool isOnBotTail = true;
+    bool isOnBotHead = true;
+    while (isOnTail || isOnHead || isOnBotHead || isOnBotTail)
         {
             isOnTail = false;
             isOnHead = false;
-            if (headX == speedX && headY == speedY)
+            isOnBotHead = false;
+            isOnBotTail = false;
+            if (headX == fruitX && headY == fruitY)
                 {
                     fruitX = rand() % (width-4) + 3;
-                    speedY = rand() % (height-4) + 3;
+                    fruitY = rand() % (height-4) + 3;
+                    isOnHead = true;
+                }
+            if (botHeadX == fruitX && botHeadY == fruitY)
+                {
+                    fruitX = rand() % (width-4) + 3;
+                    fruitY= rand() % (height-4) + 3;
                     isOnHead = true;
                 }
 
             for (int i=0; i<nTail; i++)
-                while (tailX[i] == speedX && tailY[i] == speedY)
+                while (tailX[i] == fruitX && tailY[i] == fruitY)
+                {
+                    fruitX = rand() % (width-4) + 3;
+                    fruitY = rand() % (height-4) + 3;
+                    isOnTail = true;
+                }
+            for (int i=0; i<botNTail; i++)
+                while (botTailX[i] == fruitX && botTailY[i] == fruitY)
                 {
                     fruitX = rand() % (width-4) + 3;
                     fruitY = rand() % (height-4) + 3;
