@@ -1,4 +1,4 @@
-# Snek
+# Snake
 1st Semester Introduction to Programming Project
 
 Overview 
